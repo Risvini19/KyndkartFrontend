@@ -1,62 +1,37 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Text, Image } from 'react-native';
-
-// Interface for Login Screen Props
-interface LoginScreenProps {
-  onNavigateToRegister: () => void;
-  onNavigateToForgotPassword: () => void;
-}
-
-// Interface for Registration Screen Props
-interface RegistrationScreenProps {
-  onNavigateToLogin: () => void;
-}
+import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Text } from 'react-native';
 
 // Main Authentication Component
 function AuthScreens() {
   // State for screen navigation
   const [currentScreen, setCurrentScreen] = useState<'login' | 'register'>('login');
   
-  // Login screen states
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  
-  // Registration screen states
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [registrationPassword, setRegistrationPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  
-  // Login function
-  const handleLogin = () => {
-    console.log('Login with:', username, password);
-    // Implement your login logic here
-  };
-  
-  // Registration function
-  const handleRegister = () => {
-    console.log('Register with:', name, email, registrationPassword, confirmPassword);
-    // Implement your registration logic here
-  };
-  
   // Navigation functions
   const navigateToRegister = () => setCurrentScreen('register');
   const navigateToLogin = () => setCurrentScreen('login');
   const handleForgotPassword = () => console.log('Forgot password');
-  const handleNavigateToHome = () => console.log('Navigate to home');
-  const handleNavigateToExplore = () => console.log('Navigate to explore');
   
   // Render based on current screen
-  return currentScreen === 'login' ? (
-    <LoginScreen 
-      onNavigateToRegister={navigateToRegister}
-      onNavigateToForgotPassword={handleForgotPassword}
-    />
-  ) : (
-    <RegistrationScreen 
-      onNavigateToLogin={navigateToLogin}
-    />
+  return (
+    <>
+      {currentScreen === 'login' ? (
+        <LoginScreen 
+          onNavigateToRegister={navigateToRegister}
+          onNavigateToForgotPassword={handleForgotPassword}
+        />
+      ) : (
+        <RegistrationScreen 
+          onNavigateToLogin={navigateToLogin}
+        />
+      )}
+    </>
   );
+}
+
+// Interface for Login Screen Props
+interface LoginScreenProps {
+  onNavigateToRegister: () => void;
+  onNavigateToForgotPassword: () => void;
 }
 
 // Login Screen Component
@@ -141,6 +116,11 @@ function LoginScreen({ onNavigateToRegister, onNavigateToForgotPassword }: Login
   );
 }
 
+// Interface for Registration Screen Props
+interface RegistrationScreenProps {
+  onNavigateToLogin: () => void;
+}
+
 // Registration Screen Component
 function RegistrationScreen({ onNavigateToLogin }: RegistrationScreenProps) {
   const [name, setName] = useState('');
@@ -152,6 +132,9 @@ function RegistrationScreen({ onNavigateToLogin }: RegistrationScreenProps) {
     console.log('Register with:', name, email, password, confirmPassword);
     // Implement your registration logic here
   };
+  
+  const handleNavigateToHome = () => console.log('Navigate to home');
+  const handleNavigateToExplore = () => console.log('Navigate to explore');
   
   return (
     <SafeAreaView style={styles.container}>
@@ -236,12 +219,12 @@ function RegistrationScreen({ onNavigateToLogin }: RegistrationScreenProps) {
           
           {/* Navigation Buttons */}
           <View style={styles.navigationContainer}>
-            <TouchableOpacity style={styles.navButton}>
+            <TouchableOpacity style={styles.navButton} onPress={handleNavigateToHome}>
               <View style={styles.homeIcon} />
               <Text style={styles.navButtonText}>Home</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.navButton}>
+            <TouchableOpacity style={styles.navButton} onPress={handleNavigateToExplore}>
               <View style={styles.exploreIcon} />
               <Text style={styles.navButtonText}>Explore</Text>
             </TouchableOpacity>
