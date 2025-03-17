@@ -1,113 +1,181 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Text } from 'react-native';
+import { Image, StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Text, Pressable } from 'react-native';
 
-// Main Authentication Component
-function AuthScreens() {
-  // State for screen navigation
-  const [currentScreen, setCurrentScreen] = useState<'login' | 'register'>('login');
-  
-  // Navigation functions
-  const navigateToRegister = () => setCurrentScreen('register');
-  const navigateToLogin = () => setCurrentScreen('login');
-  const handleForgotPassword = () => console.log('Forgot password');
-  
-  // Render based on current screen
-  return (
-    <>
-      {currentScreen === 'login' ? (
-        <LoginScreen 
-          onNavigateToRegister={navigateToRegister}
-          onNavigateToForgotPassword={handleForgotPassword}
-        />
-      ) : (
-        <RegistrationScreen 
-          onNavigateToLogin={navigateToLogin}
-        />
-      )}
-    </>
-  );
+interface OTPVerificationScreenProps {
+  otpValues: string[];
+  handleOtpChange: (text: string, index: number) => void;
+  onVerify: () => void;
 }
 
-// Interface for Login Screen Props
-interface LoginScreenProps {
-  onNavigateToRegister: () => void;
-  onNavigateToForgotPassword: () => void;
+export default function App() {
+  // State to manage different screens
+  const [currentScreen, setCurrentScreen] = useState('login'); // login, home, forgotPassword, otpVerification, resetPassword, success
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [contactInfo, setContactInfo] = useState('');
+  const [newPassword, setNewPassword] = useState(''); 
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [otpValues, setOtpValues] = useState(['', '', '', '']);
+  const [timer, setTimer] = useState(20);
+
+  // Navigation handlers
+  const handleLogin = () => {
+    setCurrentScreen('home');
+  };
+
+  const handleLogout = () => {
+    setCurrentScreen('login');
+  };
+
+  const handleForgotPassword = () => {
+    setCurrentScreen('forgotPassword');
+  };
+
+  const handleSendOTP = () => {
+    setCurrentScreen('otpVerification');
+    // Start timer logic would go here
+  };
+
+  const handleVerifyOTP = () => {
+    setCurrentScreen('resetPassword');
+  };
+
+  const handleResetPassword = () => {
+    setCurrentScreen('success');
+  };
+
+  const handleDone = () => {
+    setCurrentScreen('login');
+  };
+
+  const handleCreateAccount = () => {
+    setCurrentScreen('success');
+  };
+
+  // OTP input handler
+  const handleOtpChange = (text: string, index: number) => {
+    const newOtpValues = [...otpValues];
+    newOtpValues[index] = text;
+    setOtpValues(newOtpValues);
+  };
+
+  // Render different screens based on state
+  switch (currentScreen) {
+    case 'home':
+      return <HomeScreen onLogout={handleLogout} />;
+    case 'forgotPassword':
+      return <ForgotPasswordScreen contactInfo={contactInfo} setContactInfo={setContactInfo} onSendOTP={handleSendOTP} />;
+    case 'otpVerification':
+      return <OTPVerificationScreen otpValues={otpValues} handleOtpChange={handleOtpChange} onVerify={handleVerifyOTP} />;
+    case 'resetPassword':
+      return <ResetPasswordScreen 
+        newPassword={newPassword} 
+        setNewPassword={setNewPassword} 
+        confirmPassword={confirmPassword} 
+        setConfirmPassword={setConfirmPassword} 
+        onConfirm={handleResetPassword} 
+      />;
+    case 'success':
+      return <SuccessScreen onDone={handleDone} />;
+    case 'login':
+    default:
+      return (
+        <LoginScreen 
+          username={username} 
+          setUsername={setUsername} 
+          password={password} 
+          setPassword={setPassword} 
+          onLogin={handleLogin} 
+          onForgotPassword={handleForgotPassword}
+          onCreateAccount={handleCreateAccount} 
+        />
+      );
+  }
 }
 
 // Login Screen Component
-function LoginScreen({ onNavigateToRegister, onNavigateToForgotPassword }: LoginScreenProps) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  
-  const handleLogin = () => {
-    console.log('Login with:', username, password);
-    // Implement your login logic here
-  };
-  
+interface LoginScreenProps {
+  username: string;
+  setUsername: (username: string) => void;
+  password: string;
+  setPassword: (password: string) => void;
+  onLogin: () => void;
+  onForgotPassword: () => void;
+  onCreateAccount: () => void;
+}
+
+function LoginScreen({ username, setUsername, password, setPassword, onLogin, onForgotPassword, onCreateAccount }: LoginScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        {/* Background light green curve */}
-        <View style={styles.backgroundCurve} />
+        {/* Top curved background */}
+        <View style={styles.topCurve} />
         
-        {/* Logo */}
+        {/* Logo and welcome text */}
         <View style={styles.logoContainer}>
-          <View style={styles.logo}>
-            <View style={styles.logoCircle}>
-              <View style={styles.logoLeaf} />
-              <View style={styles.logoFork} />
-              <View style={styles.logoArrow} />
+          {/* Logo */}
+          <View style={styles.logoPlaceholder}>
+            <View style={styles.logoInner}>
+              <View style={styles.logoLeaf}></View>
+              <View style={styles.logoChart}></View>
             </View>
           </View>
+          
+          <Text style={styles.welcomeText}>Hi Dear,</Text>
+          <Text style={styles.loginText}>Login To Your Account</Text>
         </View>
         
-        {/* Login Text */}
-        <Text style={styles.loginTitle}>Login To Your Account</Text>
-        
-        {/* Form Container */}
+        {/* Login Form */}
         <View style={styles.formContainer}>
-          {/* Email Input */}
-          <Text style={styles.inputLabel}>Email</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Your Email"
-            value={username}
-            onChangeText={setUsername}
-            keyboardType="email-address"
-          />
+          {/* Username Input */}
+          <View style={styles.inputContainer}>
+            <View style={styles.iconContainer}>
+              <View style={styles.userIcon} />
+            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Username"
+              value={username}
+              onChangeText={setUsername}
+            />
+          </View>
           
           {/* Password Input */}
-          <Text style={styles.inputLabel}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View style={styles.inputContainer}>
+            <View style={styles.iconContainer}>
+              <View style={styles.lockIcon} />
+            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
           
           {/* Forgot Password */}
-          <TouchableOpacity style={styles.forgotContainer} onPress={onNavigateToForgotPassword}>
-            <Text style={styles.forgotText}>Forgot password?</Text>
+          <TouchableOpacity style={styles.forgotContainer} onPress={onForgotPassword}>
+            <Text style={styles.forgotText}>Forgot Password?</Text>
           </TouchableOpacity>
           
-          {/* Sign In Button */}
-          <TouchableOpacity style={styles.signInButton} onPress={handleLogin}>
-            <Text style={styles.signInButtonText}>Sign in</Text>
+          {/* Login Button */}
+          <TouchableOpacity style={styles.loginButton} onPress={onLogin}>
+            <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
           
-          {/* Divider */}
+          {/* Or Divider */}
           <View style={styles.dividerContainer}>
             <View style={styles.divider} />
             <Text style={styles.dividerText}>Or</Text>
             <View style={styles.divider} />
           </View>
           
-          {/* Create Account Link */}
+          {/* Create Account */}
           <View style={styles.createAccountContainer}>
-            <Text style={styles.noAccountText}>Don't have an account yet? </Text>
-            <TouchableOpacity onPress={onNavigateToRegister}>
-              <Text style={styles.registerText}>Register</Text>
+            <Text style={styles.noAccountText}>Don't have any accounts? </Text>
+            <TouchableOpacity onPress={onCreateAccount}>
+              <Text style={styles.createAccountText}>Create Account</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -116,120 +184,243 @@ function LoginScreen({ onNavigateToRegister, onNavigateToForgotPassword }: Login
   );
 }
 
-// Interface for Registration Screen Props
-interface RegistrationScreenProps {
-  onNavigateToLogin: () => void;
+// Home Screen Component
+interface HomeScreenProps {
+  onLogout: () => void;
 }
 
-// Registration Screen Component
-function RegistrationScreen({ onNavigateToLogin }: RegistrationScreenProps) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  
-  const handleRegister = () => {
-    console.log('Register with:', name, email, password, confirmPassword);
-    // Implement your registration logic here
-  };
-  
-  const handleNavigateToHome = () => console.log('Navigate to home');
-  const handleNavigateToExplore = () => console.log('Navigate to explore');
-  
+function HomeScreen({ onLogout }: HomeScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        {/* Background light green curve */}
-        <View style={styles.backgroundCurve} />
+        {/* Top curved background */}
+        <View style={styles.topCurve} />
         
-        {/* Logo */}
+        {/* Logo and app name */}
         <View style={styles.logoContainer}>
-          <View style={styles.logo}>
-            <View style={styles.logoCircle}>
-              <View style={styles.logoLeaf} />
-              <View style={styles.logoFork} />
-              <View style={styles.logoArrow} />
+          {/* Using a placeholder View instead of requiring an image that might not exist */}
+          <View style={styles.logoPlaceholder}>
+            <View style={styles.logoInner}>
+              <View style={styles.logoLeaf}></View>
+              <View style={styles.logoChart}></View>
             </View>
           </View>
+          <Text style={styles.appName}>KyndKart</Text>
         </View>
         
-        {/* Create Account Text */}
-        <Text style={styles.loginTitle}>Create New Account</Text>
+        {/* Logout button */}
+        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
         
-        {/* Form Container */}
+        {/* Bottom curved background */}
+        <View style={styles.bottomCurve} />
+      </View>
+    </SafeAreaView>
+  );
+}
+
+// Forgot Password Screen Component
+interface ForgotPasswordScreenProps {
+  contactInfo: string;
+  setContactInfo: (contactInfo: string) => void;
+  onSendOTP: () => void;
+}
+
+function ForgotPasswordScreen({ contactInfo, setContactInfo, onSendOTP }: ForgotPasswordScreenProps) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        {/* Top curved background */}
+        <View style={styles.topCurve} />
+        
+        {/* Logo and title */}
+        <View style={styles.logoContainer}>
+          <View style={styles.logoPlaceholder}>
+            <View style={styles.logoInner}>
+              <View style={styles.logoLeaf}></View>
+              <View style={styles.logoChart}></View>
+            </View>
+          </View>
+          <Text style={styles.pageTitle}>Forgot Password?</Text>
+        </View>
+        
+        {/* Contact Input Form */}
         <View style={styles.formContainer}>
-          {/* Name Input */}
-          <Text style={styles.inputLabel}>Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Your Name"
-            value={name}
-            onChangeText={setName}
-          />
+          {/* Email/Phone Input */}
+          <View style={styles.inputContainer}>
+            <View style={styles.iconContainer}>
+              <View style={styles.lockIcon} />
+            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Your Mobile Number or Email Address"
+              value={contactInfo}
+              onChangeText={setContactInfo}
+            />
+          </View>
           
-          {/* Email Input */}
-          <Text style={styles.inputLabel}>Email</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Your Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
+          {/* Send OTP Button */}
+          <TouchableOpacity style={[styles.loginButton, {marginTop: 20}]} onPress={onSendOTP}>
+            <Text style={styles.loginButtonText}>Send OTP</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+// OTP Verification Screen Component
+function OTPVerificationScreen({ otpValues, handleOtpChange, onVerify }: OTPVerificationScreenProps) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        {/* Top curved background */}
+        <View style={styles.topCurve} />
+        
+        {/* Logo and title */}
+        <View style={styles.logoContainer}>
+          <View style={styles.logoPlaceholder}>
+            <View style={styles.logoInner}>
+              <View style={styles.logoLeaf}></View>
+              <View style={styles.logoChart}></View>
+            </View>
+          </View>
+          <Text style={styles.pageTitle}>OTP Verification</Text>
+        </View>
+        
+        {/* OTP Form */}
+        <View style={styles.formContainer}>
+          <Text style={styles.otpInstructions}>
+            Enter 4 digit code sent to your{'\n'}
+            E-mail risvini2001@gmail.com
+          </Text>
           
-          {/* Password Input */}
-          <Text style={styles.inputLabel}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
+          {/* OTP Input Boxes */}
+          <View style={styles.otpContainer}>
+            {otpValues.map((digit: string, index: number) => (
+              <TextInput
+              key={index}
+              style={styles.otpInput}
+              maxLength={1}
+              keyboardType="number-pad"
+              value={digit}
+              onChangeText={(text: string) => handleOtpChange(text, index)}
+              />
+            ))}
+          </View>
           
-          {/* Confirm Password Input */}
-          <Text style={styles.inputLabel}>Confirm Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
+          <Text style={styles.resendTimer}>Resend code in 20sec</Text>
           
-          {/* Next Button */}
-          <TouchableOpacity style={styles.signInButton} onPress={handleRegister}>
-            <Text style={styles.signInButtonText}>Next</Text>
+          {/* Verify Button */}
+          <TouchableOpacity style={[styles.loginButton, {marginTop: 20}]} onPress={onVerify}>
+            <Text style={styles.loginButtonText}>Verify</Text>
           </TouchableOpacity>
           
-          {/* Divider */}
-          <View style={styles.dividerContainer}>
-            <View style={styles.divider} />
-            <Text style={styles.dividerText}>Or</Text>
-            <View style={styles.divider} />
-          </View>
-          
-          {/* Back to Login Link */}
-          <View style={styles.createAccountContainer}>
-            <Text style={styles.noAccountText}>Already have an account? </Text>
-            <TouchableOpacity onPress={onNavigateToLogin}>
-              <Text style={styles.registerText}>Login</Text>
-            </TouchableOpacity>
-          </View>
-          
-          {/* Navigation Buttons */}
-          <View style={styles.navigationContainer}>
-            <TouchableOpacity style={styles.navButton} onPress={handleNavigateToHome}>
-              <View style={styles.homeIcon} />
-              <Text style={styles.navButtonText}>Home</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.navButton} onPress={handleNavigateToExplore}>
-              <View style={styles.exploreIcon} />
-              <Text style={styles.navButtonText}>Explore</Text>
+          {/* Resend option */}
+          <View style={styles.resendContainer}>
+            <Text style={styles.resendText}>Didn't receive a code? </Text>
+            <TouchableOpacity>
+              <Text style={styles.resendLink}>Resend.</Text>
             </TouchableOpacity>
           </View>
         </View>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+// Reset Password Screen Component
+interface ResetPasswordScreenProps {
+  newPassword: string;
+  setNewPassword: (password: string) => void;
+  confirmPassword: string;
+  setConfirmPassword: (password: string) => void;
+  onConfirm: () => void;
+}
+
+function ResetPasswordScreen({ newPassword, setNewPassword, confirmPassword, setConfirmPassword, onConfirm }: ResetPasswordScreenProps) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        {/* Top curved background */}
+        <View style={styles.topCurve} />
+        
+        {/* Logo and title */}
+        <View style={styles.logoContainer}>
+          <View style={styles.logoPlaceholder}>
+            <View style={styles.logoInner}>
+              <View style={styles.logoLeaf}></View>
+              <View style={styles.logoChart}></View>
+            </View>
+          </View>
+          <Text style={styles.pageTitle}>Reset Your Password</Text>
+        </View>
+        
+        {/* Reset Password Form */}
+        <View style={styles.formContainer}>
+          {/* New Password Input */}
+          <View style={styles.passwordInputContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Enter New Password"
+              secureTextEntry
+              value={newPassword}
+              onChangeText={setNewPassword}
+            />
+          </View>
+          
+          {/* Confirm Password Input */}
+          <View style={styles.passwordInputContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Enter Confirm Password"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+          </View>
+          
+          {/* Confirm Button */}
+          <TouchableOpacity style={[styles.loginButton, {marginTop: 20, width: '40%'}]} onPress={onConfirm}>
+            <Text style={styles.loginButtonText}>Confirm</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+// Success Screen Component
+interface SuccessScreenProps {
+  onDone: () => void;
+}
+
+function SuccessScreen({ onDone }: SuccessScreenProps) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        {/* Top curved background */}
+        <View style={styles.topCurve} />
+        
+        {/* Success Card */}
+        <View style={styles.successCard}>
+          {/* Success Icon */}
+          <View style={styles.successIconContainer}>
+            <View style={styles.checkmark}></View>
+          </View>
+          
+          <Text style={styles.successTitle}>Success!</Text>
+          <Text style={styles.successMessage}>
+            Your Account has been{'\n'}
+            Created Successfully
+          </Text>
+        </View>
+        
+        {/* Done Button */}
+        <TouchableOpacity style={[styles.loginButton, {marginTop: 20, width: '40%'}]} onPress={onDone}>
+          <Text style={styles.loginButtonText}>Done</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -242,170 +433,267 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
     position: 'relative',
   },
-  backgroundCurve: {
+  topCurve: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
+    height: '30%',
+    backgroundColor: '#E8F5F0',
+    borderBottomLeftRadius: 200,
+    borderBottomRightRadius: 200,
+  },
+  bottomCurve: {
+    position: 'absolute',
     bottom: 0,
-    backgroundColor: '#F2F9F5',
-    borderBottomRightRadius: 500,
-    zIndex: -1,
+    left: 0,
+    right: 0,
+    height: '30%',
+    backgroundColor: '#E8F5F0',
+    borderTopLeftRadius: 200,
+    borderTopRightRadius: 200,
   },
   logoContainer: {
     alignItems: 'center',
-    marginTop: 60,
-    marginBottom: 16,
+    justifyContent: 'center',
+    zIndex: 1,
+    marginBottom: 20,
   },
-  logo: {
+  logoPlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#006E29',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoInner: {
     width: 80,
     height: 80,
-    backgroundColor: '#008E33',
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderRadius: 40,
+    backgroundColor: '#FFFFFF',
     position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   logoLeaf: {
     position: 'absolute',
-    left: 8,
-    width: 12,
-    height: 24,
-    backgroundColor: '#008E33',
-    borderTopRightRadius: 12,
-    borderBottomLeftRadius: 12,
+    left: 10,
+    width: 25,
+    height: 40,
+    backgroundColor: '#006E29',
+    borderTopRightRadius: 25,
+    borderBottomLeftRadius: 25,
   },
-  logoFork: {
+  logoChart: {
     position: 'absolute',
-    width: 4,
-    height: 24,
-    backgroundColor: '#008E33',
-    left: 26,
+    right: 10,
+    width: 25,
+    height: 40,
+    backgroundColor: '#006E29',
+    borderTopLeftRadius: 25,
+    borderBottomRightRadius: 25,
   },
-  logoArrow: {
-    position: 'absolute',
-    right: 8,
-    width: 12,
-    height: 24,
-    backgroundColor: '#008E33',
-    borderTopLeftRadius: 12,
-    borderBottomRightRadius: 12,
-  },
-  loginTitle: {
+  welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#008E33',
-    textAlign: 'center',
-    marginBottom: 32,
+    color: '#333',
+    marginTop: 10,
+  },
+  loginText: {
+    fontSize: 18,
+    color: '#666',
   },
   formContainer: {
-    width: '100%',
+    width: '80%',
+    marginTop: 20,
   },
-  inputLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333333',
-    marginBottom: 8,
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#DDD',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+  },
+  iconContainer: {
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  userIcon: {
+    width: 20,
+    height: 20,
+    backgroundColor: '#666',
+    borderRadius: 10,
+  },
+  lockIcon: {
+    width: 20,
+    height: 20,
+    backgroundColor: '#666',
+    borderRadius: 5,
   },
   input: {
-    backgroundColor: '#F0F0F0',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 20,
-    fontSize: 16,
+    flex: 1,
+    height: 40,
+    paddingHorizontal: 10,
   },
   forgotContainer: {
     alignItems: 'flex-end',
-    marginBottom: 24,
   },
   forgotText: {
-    color: '#008E33',
-    fontSize: 14,
+    color: '#006E29',
   },
-  signInButton: {
-    backgroundColor: '#008E33',
-    borderRadius: 8,
-    paddingVertical: 16,
+  loginButton: {
+    backgroundColor: '#006E29',
+    paddingVertical: 10,
     alignItems: 'center',
-    marginBottom: 24,
+    marginHorizontal: 100,
+    marginVertical: 20,
+    borderRadius: 8,
+    width: '40%',
   },
-  signInButtonText: {
-    color: '#FFFFFF',
+  loginButtonText: {
+    color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
+    marginVertical: 15,
   },
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: '#DDDDDD',
+    backgroundColor: '#CCC',
   },
   dividerText: {
-    paddingHorizontal: 16,
-    color: '#666666',
-    fontSize: 14,
+    marginHorizontal: 10,
+    color: '#666',
   },
   createAccountContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 20,
   },
   noAccountText: {
-    color: '#666666',
-    fontSize: 14,
+    color: '#666',
   },
-  registerText: {
-    color: '#008E33',
+  createAccountText: {
+    color: '#006E29',
     fontWeight: 'bold',
-    fontSize: 14,
   },
-  navigationContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 16,
-  },
-  navButton: {
+  logoutButton: {
+    backgroundColor: '#FF5733',
+    paddingVertical: 10,
     alignItems: 'center',
+    borderRadius: 8,
+    width: '40%',
   },
-  homeIcon: {
-    width: 24,
-    height: 24,
-    backgroundColor: '#008E33',
-    borderRadius: 4,
-    marginBottom: 4,
+  logoutButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
-  exploreIcon: {
-    width: 0,
-    height: 0,
-    borderLeftWidth: 12,
-    borderRightWidth: 12,
-    borderBottomWidth: 24,
-    borderStyle: 'solid',
-    backgroundColor: 'transparent',
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#666666',
-    marginBottom: 4,
+  passwordInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#DDD',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 15,
   },
-  navButtonText: {
-    color: '#666666',
-    fontSize: 14,
+  otpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  passwordInput: {
+    flex: 1,
+    height: 40,
+    paddingHorizontal: 10,
+  },
+  otpInput: {
+    width: 40,
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#DDD',
+    textAlign: 'center',
+    fontSize: 18,
+    borderRadius: 8,
+  },
+  otpInstructions: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#666',
+    marginVertical: 10,
+  },
+  resendTimer: {
+    marginTop: 10,
+    textAlign: 'center',
+    color: '#666',
+  },
+  resendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  resendText: {
+    color: '#666',
+  },
+  resendLink: {
+    color: '#006E29',
+    fontWeight: 'bold',
+  },
+  successCard: {
+    alignItems: 'center',
+    backgroundColor: '#E8F5F0',
+    padding: 20,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  successIconContainer: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#006E29',
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkmark: {
+    width: 25,
+    height: 25,
+    backgroundColor: '#FFF',
+    borderRadius: 12.5,
+  },
+  successTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#006E29',
+    marginTop: 10,
+  },
+  pageTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 10,
+  },
+  successMessage: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#666',
+  },
+  appName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 10,
   },
 });
-
-export default AuthScreens;
