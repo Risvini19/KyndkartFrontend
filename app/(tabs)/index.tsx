@@ -1,158 +1,33 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Text, Image } from 'react-native';
 
-// Interface for Login Screen Props
-interface LoginScreenProps {
-  onNavigateToRegister: () => void;
-  onNavigateToForgotPassword: () => void;
-}
-
-// Interface for Registration Screen Props
 interface RegistrationScreenProps {
-  onNavigateToLogin: () => void;
+  name: string;
+  setName: (name: string) => void;
+  email: string;
+  setEmail: (email: string) => void;
+  password: string;
+  setPassword: (password: string) => void;
+  confirmPassword: string;
+  setConfirmPassword: (confirmPassword: string) => void;
+  onRegister: () => void;
+  onNavigateToHome: () => void;
+  onNavigateToExplore: () => void;
 }
 
-// Main Authentication Component
-function AuthScreens() {
-  // State for screen navigation
-  const [currentScreen, setCurrentScreen] = useState<'login' | 'register'>('login');
-  
-  // Login screen states
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  
-  // Registration screen states
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [registrationPassword, setRegistrationPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  
-  // Login function
-  const handleLogin = () => {
-    console.log('Login with:', username, password);
-    // Implement your login logic here
-  };
-  
-  // Registration function
-  const handleRegister = () => {
-    console.log('Register with:', name, email, registrationPassword, confirmPassword);
-    // Implement your registration logic here
-  };
-  
-  // Navigation functions
-  const navigateToRegister = () => setCurrentScreen('register');
-  const navigateToLogin = () => setCurrentScreen('login');
-  const handleForgotPassword = () => console.log('Forgot password');
-  const handleNavigateToHome = () => console.log('Navigate to home');
-  const handleNavigateToExplore = () => console.log('Navigate to explore');
-  
-  // Render based on current screen
-  return currentScreen === 'login' ? (
-    <LoginScreen 
-      onNavigateToRegister={navigateToRegister}
-      onNavigateToForgotPassword={handleForgotPassword}
-    />
-  ) : (
-    <RegistrationScreen 
-      onNavigateToLogin={navigateToLogin}
-    />
-  );
-}
-
-// Login Screen Component
-function LoginScreen({ onNavigateToRegister, onNavigateToForgotPassword }: LoginScreenProps) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  
-  const handleLogin = () => {
-    console.log('Login with:', username, password);
-    // Implement your login logic here
-  };
-  
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        {/* Background light green curve */}
-        <View style={styles.backgroundCurve} />
-        
-        {/* Logo */}
-        <View style={styles.logoContainer}>
-          <View style={styles.logo}>
-            <View style={styles.logoCircle}>
-              <View style={styles.logoLeaf} />
-              <View style={styles.logoFork} />
-              <View style={styles.logoArrow} />
-            </View>
-          </View>
-        </View>
-        
-        {/* Login Text */}
-        <Text style={styles.loginTitle}>Login To Your Account</Text>
-        
-        {/* Form Container */}
-        <View style={styles.formContainer}>
-          {/* Email Input */}
-          <Text style={styles.inputLabel}>Email</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Your Email"
-            value={username}
-            onChangeText={setUsername}
-            keyboardType="email-address"
-          />
-          
-          {/* Password Input */}
-          <Text style={styles.inputLabel}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          
-          {/* Forgot Password */}
-          <TouchableOpacity style={styles.forgotContainer} onPress={onNavigateToForgotPassword}>
-            <Text style={styles.forgotText}>Forgot password?</Text>
-          </TouchableOpacity>
-          
-          {/* Sign In Button */}
-          <TouchableOpacity style={styles.signInButton} onPress={handleLogin}>
-            <Text style={styles.signInButtonText}>Sign in</Text>
-          </TouchableOpacity>
-          
-          {/* Divider */}
-          <View style={styles.dividerContainer}>
-            <View style={styles.divider} />
-            <Text style={styles.dividerText}>Or</Text>
-            <View style={styles.divider} />
-          </View>
-          
-          {/* Create Account Link */}
-          <View style={styles.createAccountContainer}>
-            <Text style={styles.noAccountText}>Don't have an account yet? </Text>
-            <TouchableOpacity onPress={onNavigateToRegister}>
-              <Text style={styles.registerText}>Register</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </SafeAreaView>
-  );
-}
-
-// Registration Screen Component
-function RegistrationScreen({ onNavigateToLogin }: RegistrationScreenProps) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  
-  const handleRegister = () => {
-    console.log('Register with:', name, email, password, confirmPassword);
-    // Implement your registration logic here
-  };
-  
+function RegistrationScreen({
+  name,
+  setName,
+  email,
+  setEmail,
+  password,
+  setPassword,
+  confirmPassword,
+  setConfirmPassword,
+  onRegister,
+  onNavigateToHome,
+  onNavigateToExplore
+}: RegistrationScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -171,7 +46,7 @@ function RegistrationScreen({ onNavigateToLogin }: RegistrationScreenProps) {
         </View>
         
         {/* Create Account Text */}
-        <Text style={styles.loginTitle}>Create New Account</Text>
+        <Text style={styles.createAccountTitle}>Create New Account</Text>
         
         {/* Form Container */}
         <View style={styles.formContainer}>
@@ -215,8 +90,8 @@ function RegistrationScreen({ onNavigateToLogin }: RegistrationScreenProps) {
           />
           
           {/* Next Button */}
-          <TouchableOpacity style={styles.signInButton} onPress={handleRegister}>
-            <Text style={styles.signInButtonText}>Next</Text>
+          <TouchableOpacity style={styles.nextButton} onPress={onRegister}>
+            <Text style={styles.nextButtonText}>Next</Text>
           </TouchableOpacity>
           
           {/* Divider */}
@@ -226,22 +101,14 @@ function RegistrationScreen({ onNavigateToLogin }: RegistrationScreenProps) {
             <View style={styles.divider} />
           </View>
           
-          {/* Back to Login Link */}
-          <View style={styles.createAccountContainer}>
-            <Text style={styles.noAccountText}>Already have an account? </Text>
-            <TouchableOpacity onPress={onNavigateToLogin}>
-              <Text style={styles.registerText}>Login</Text>
-            </TouchableOpacity>
-          </View>
-          
           {/* Navigation Buttons */}
           <View style={styles.navigationContainer}>
-            <TouchableOpacity style={styles.navButton}>
+            <TouchableOpacity style={styles.navButton} onPress={onNavigateToHome}>
               <View style={styles.homeIcon} />
               <Text style={styles.navButtonText}>Home</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.navButton}>
+            <TouchableOpacity style={styles.navButton} onPress={onNavigateToExplore}>
               <View style={styles.exploreIcon} />
               <Text style={styles.navButtonText}>Explore</Text>
             </TouchableOpacity>
@@ -319,7 +186,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderBottomRightRadius: 12,
   },
-  loginTitle: {
+  createAccountTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#008E33',
@@ -342,22 +209,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 16,
   },
-  forgotContainer: {
-    alignItems: 'flex-end',
-    marginBottom: 24,
-  },
-  forgotText: {
-    color: '#008E33',
-    fontSize: 14,
-  },
-  signInButton: {
+  nextButton: {
     backgroundColor: '#008E33',
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
     marginBottom: 24,
   },
-  signInButtonText: {
+  nextButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
@@ -375,20 +234,6 @@ const styles = StyleSheet.create({
   dividerText: {
     paddingHorizontal: 16,
     color: '#666666',
-    fontSize: 14,
-  },
-  createAccountContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  noAccountText: {
-    color: '#666666',
-    fontSize: 14,
-  },
-  registerText: {
-    color: '#008E33',
-    fontWeight: 'bold',
     fontSize: 14,
   },
   navigationContainer: {
@@ -425,4 +270,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AuthScreens;
+export default RegistrationScreen;
