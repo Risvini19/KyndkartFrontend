@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "KyndkartFrontend",
-    "slug": "KyndkartFrontend",
+    "name": "KyndkartFront",
+    "slug": "KyndkartFront",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
