@@ -11,13 +11,22 @@ import {
 } from 'react-native';
 
 export default function KyndKartApp() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  // If logged in, show home screen, otherwise show login screen
-  return isLoggedIn ? <HomeScreen onLogout={() => setIsLoggedIn(false)} /> : 
-    <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
+  const [currentScreen, setCurrentScreen] = useState('login'); // 'login', 'register', or 'home'
+  
+  // Screen navigation handlers
+  const handleLogin = () => setCurrentScreen('home');
+  const handleLogout = () => setCurrentScreen('login');
+  const handleGoToRegister = () => setCurrentScreen('register');
+  const handleGoToLogin = () => setCurrentScreen('login');
+  
+  // Render the appropriate screen
+  if (currentScreen === 'home') {
+    return <HomeScreen onLogout={handleLogout} />;
+  } else if (currentScreen === 'register') {
+    return <RegisterScreen onRegisterComplete={handleLogin} onGoToLogin={handleGoToLogin} />;
+  } else {
+    return <LoginScreen onLogin={handleLogin} onGoToRegister={handleGoToRegister} />;
+  }
 }
 
 function HomeScreen({ onLogout }: { onLogout: () => void }) {
@@ -53,7 +62,7 @@ function HomeScreen({ onLogout }: { onLogout: () => void }) {
   );
 }
 
-function LoginScreen({ onLogin }: { onLogin: () => void }) {
+function LoginScreen({ onLogin, onGoToRegister }: { onLogin: () => void; onGoToRegister: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -124,8 +133,116 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
           {/* Register Link */}
           <View style={styles.registerContainer}>
             <Text style={styles.registerText}>Don't have an account yet? </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onGoToRegister}>
               <Text style={styles.registerLink}>Register</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        
+        {/* Bottom curved background */}
+        <View style={styles.bottomCurve} />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
+
+function RegisterScreen({ onRegisterComplete, onGoToLogin }: { onRegisterComplete: () => void; onGoToLogin: () => void }) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.content}
+      >
+        {/* Top curved background */}
+        <View style={styles.topCurve} />
+        
+        <View style={styles.loginContainer}>
+          {/* Logo */}
+          <View style={styles.logoPlaceholder}>
+            <View style={styles.logoInner}>
+              {/* Left leaf */}
+              <View style={styles.leftLeaf}></View>
+              {/* Right leaf */}
+              <View style={styles.rightLeaf}></View>
+            </View>
+          </View>
+          
+          {/* Register Title */}
+          <Text style={styles.loginTitle}>Create New Account</Text>
+          
+          {/* Name Field */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Your Name"
+              placeholderTextColor="#999"
+              value={name}
+              onChangeText={setName}
+            />
+          </View>
+          
+          {/* Email Field */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Email</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Your Email"
+              placeholderTextColor="#999"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
+          
+          {/* Password Field */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#999"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
+          
+          {/* Confirm Password Field */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Confirm Password</Text>
+            <TextInput
+              style={[styles.input, styles.highlightedInput]}
+              placeholder="Confirm Password"
+              placeholderTextColor="#999"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+          </View>
+          
+          {/* Register Button */}
+          <TouchableOpacity style={styles.loginButton} onPress={onRegisterComplete}>
+            <Text style={styles.loginButtonText}>Next</Text>
+          </TouchableOpacity>
+          
+          {/* Divider */}
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>Or</Text>
+            <View style={styles.dividerLine} />
+          </View>
+          
+          {/* Login Link */}
+          <View style={styles.registerContainer}>
+            <Text style={styles.registerText}>Already have an account? </Text>
+            <TouchableOpacity onPress={onGoToLogin}>
+              <Text style={styles.registerLink}>Log in</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -244,6 +361,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     fontSize: 16,
+  },
+  highlightedInput: {
+    borderWidth: 2,
+    borderColor: '#0080FF',
   },
   forgotPassword: {
     alignSelf: 'flex-end',
