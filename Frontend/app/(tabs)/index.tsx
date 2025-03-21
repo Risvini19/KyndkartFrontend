@@ -7,6 +7,7 @@ interface OTPVerificationScreenProps {
   onVerify: () => void;
 }
 
+
 export default function App() {
   // State to manage different screens
   const [currentScreen, setCurrentScreen] = useState('login'); // login, home, forgotPassword, otpVerification, resetPassword, success
@@ -460,8 +461,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1,
-    marginBottom: 20,
+ 5    marginBottom: 20,
   },
   logoPlaceholder: {
     width: 100,
