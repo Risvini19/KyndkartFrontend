@@ -8,12 +8,15 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  ViewStyle
 } from 'react-native';
 
 export default function KyndKartApp() {
-  const [currentScreen, setCurrentScreen] = useState('login'); // 'login', 'register', 'otp', 'home', 'shopRegister', 'ngoRegister'
+  const [currentScreen, setCurrentScreen] = useState('login'); // 'login', 'register', 'otp', 'home', 'shopRegister', 'ngoRegister', 'profile'
   const [email, setEmail] = useState('');
+  const [userName, setUserName] = useState('Huzrin Hussain');
+  const [userEmail, setUserEmail] = useState('huzrinhussain@gmail.com');
   
   // Screen navigation handlers
   const handleLogin = () => setCurrentScreen('otp');
@@ -23,13 +26,16 @@ export default function KyndKartApp() {
   const handleGoToLogin = () => setCurrentScreen('login');
   const handleGoToShopRegister = () => setCurrentScreen('shopRegister');
   const handleGoToNGORegister = () => setCurrentScreen('ngoRegister');
+  const handleGoToProfile = () => setCurrentScreen('profile');
+  const handleGoToHome = () => setCurrentScreen('home');
   
   // Render the appropriate screen
   if (currentScreen === 'home') {
     return <HomeScreen 
       onLogout={handleLogout} 
       onShopRegister={handleGoToShopRegister}
-      onNGORegister={handleGoToNGORegister} 
+      onNGORegister={handleGoToNGORegister}
+      onProfilePress={handleGoToProfile}
     />;
   } else if (currentScreen === 'register') {
     return <RegisterScreen onRegisterComplete={(email: string) => {
@@ -42,6 +48,12 @@ export default function KyndKartApp() {
     return <ShopRegisterScreen onGoBack={() => setCurrentScreen('home')} onSubmit={() => setCurrentScreen('home')} />;
   } else if (currentScreen === 'ngoRegister') {
     return <NGORegisterScreen onGoBack={() => setCurrentScreen('home')} onSubmit={() => setCurrentScreen('home')} />;
+  } else if (currentScreen === 'profile') {
+    return <ProfileScreen 
+      userName={userName}
+      userEmail={userEmail}
+      onGoToHome={handleGoToHome}
+    />;
   } else {
     return <LoginScreen onLogin={(email) => {
       setEmail(email);
@@ -50,7 +62,7 @@ export default function KyndKartApp() {
   }
 }
 
-// Updated app logo component with circular emblem and leaf design
+// Updated app logo component with a simple leaf design
 function AppLogo() {
   return (
     <View style={styles.logoContainer}>
@@ -68,9 +80,10 @@ interface HomeScreenProps {
   onLogout: () => void;
   onShopRegister: () => void;
   onNGORegister: () => void;
+  onProfilePress: () => void;
 }
 
-function HomeScreen({ onLogout, onShopRegister, onNGORegister }: HomeScreenProps) {
+function HomeScreen({ onLogout, onShopRegister, onNGORegister, onProfilePress }: HomeScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.homeContent}>
@@ -82,16 +95,8 @@ function HomeScreen({ onLogout, onShopRegister, onNGORegister }: HomeScreenProps
           <Text style={styles.welcomeText}>Welcome to KyndKart</Text>
         </View>
         
-        {/* App Icon - Shopping bag with sprout */}
-        <View style={styles.appIconContainer}>
-          <View style={styles.appIcon}>
-            <View style={styles.bagOutline}>
-              <View style={styles.sproutStem} />
-              <View style={styles.sproutLeftLeaf} />
-              <View style={styles.sproutRightLeaf} />
-            </View>
-          </View>
-        </View>
+        {/* App Logo */}
+        <AppLogo />
         
         {/* App Name */}
         <Text style={styles.appNameLarge}>KyndKart</Text>
@@ -118,7 +123,7 @@ function HomeScreen({ onLogout, onShopRegister, onNGORegister }: HomeScreenProps
               <Text style={styles.featureButtonText}>Shop</Text>
             </TouchableOpacity>
             
-            {/* Donations Button with heart icon - Updated to navigate to NGO registration */}
+            {/* Donations Button with heart icon */}
             <TouchableOpacity style={styles.featureButton} onPress={onNGORegister}>
               <View style={styles.featureIconContainer}>
                 <View style={styles.heartIconContainer}>
@@ -131,7 +136,7 @@ function HomeScreen({ onLogout, onShopRegister, onNGORegister }: HomeScreenProps
           
           <View style={styles.featureRow}>
             {/* Profile Button with person icon */}
-            <TouchableOpacity style={styles.featureButton}>
+            <TouchableOpacity style={styles.featureButton} onPress={onProfilePress}>
               <View style={styles.featureIconContainer}>
                 <View style={styles.personIconContainer}>
                   <View style={styles.personHead} />
@@ -335,7 +340,7 @@ function RegisterScreen({ onRegisterComplete, onGoToLogin }: RegisterScreenProps
             />
           </View>
           
-          {/* Confirm Password Field - removed highlighting */}
+          {/* Confirm Password Field */}
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Confirm Password</Text>
             <TextInput
@@ -532,7 +537,7 @@ function ShopRegisterScreen({ onGoBack, onSubmit }: ShopRegisterScreenProps) {
               />
             </View>
             
-            {/* Location Field - Updated for selection */}
+            {/* Location Field */}
             <View style={styles.formGroup}>
               <Text style={styles.formLabel}>Location</Text>
               <TouchableOpacity 
@@ -600,7 +605,7 @@ function ShopRegisterScreen({ onGoBack, onSubmit }: ShopRegisterScreenProps) {
   );
 }
 
-// New NGO Register Screen based on the prototype
+// NGO Register Screen
 interface NGORegisterScreenProps {
   onGoBack: () => void;
   onSubmit: () => void;
@@ -703,7 +708,7 @@ function NGORegisterScreen({ onGoBack, onSubmit }: NGORegisterScreenProps) {
               />
             </View>
             
-            {/* Submit Button - Using the green button style from prototype */}
+            {/* Submit Button */}
             <TouchableOpacity 
               style={styles.greenSubmitButton} 
               onPress={onSubmit}
@@ -713,6 +718,118 @@ function NGORegisterScreen({ onGoBack, onSubmit }: NGORegisterScreenProps) {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
+
+// Profile Screen
+interface ProfileScreenProps {
+  userName: string;
+  userEmail: string;
+  onGoToHome: () => void;
+}
+
+function ProfileScreen({ userName, userEmail, onGoToHome }: ProfileScreenProps) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.profileContainer}>
+        {/* Profile Header */}
+        <View style={styles.profileHeader}>
+          <View style={styles.profileHeaderCurve} />
+          <Text style={styles.profileTitle}>Profile</Text>
+          
+          {/* User Profile Section */}
+          <View style={styles.userProfileCard}>
+            <View style={styles.userAvatarContainer}>
+              <View style={styles.userAvatar} />
+            </View>
+            <Text style={styles.userName}>{userName}</Text>
+            <Text style={styles.userEmail}>{userEmail}</Text>
+            
+            <TouchableOpacity style={styles.editProfileButton}>
+              <Text style={styles.editProfileIcon}>✏️</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        
+        {/* Profile Sections */}
+        <ScrollView style={styles.profileSections}>
+          {/* Personal Activity Section */}
+          <Text style={styles.sectionTitle}>Personal Activity</Text>
+          
+          <TouchableOpacity style={styles.profileOption}>
+            <View style={styles.iconContainer}>
+              <View style={[styles.optionIcon, styles.historyIcon]} />
+            </View>
+            <View style={styles.optionTextContainer}>
+              <Text style={styles.optionTitle}>Donation History</Text>
+              <Text style={styles.optionDescription}>Track your contributions</Text>
+            </View>
+            <Text style={styles.arrowIcon}>›</Text>
+          </TouchableOpacity>
+          
+          {/* Account Section */}
+          <Text style={styles.sectionTitle}>Account</Text>
+          
+          <TouchableOpacity style={styles.profileOption}>
+            <View style={styles.iconContainer}>
+              <View style={[styles.optionIcon, styles.settingsIcon]} />
+            </View>
+            <View style={styles.optionTextContainer}>
+              <Text style={styles.optionTitle}>Settings</Text>
+              <Text style={styles.optionDescription}>Make changes to your account</Text>
+            </View>
+            <Text style={styles.arrowIcon}>›</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.profileOption}>
+            <View style={styles.iconContainer}>
+              <View style={[styles.optionIcon, styles.addressIcon]} />
+            </View>
+            <View style={styles.optionTextContainer}>
+              <Text style={styles.optionTitle}>Change Address</Text>
+              <Text style={styles.optionDescription}>Modify your addresses</Text>
+            </View>
+            <Text style={styles.arrowIcon}>›</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.profileOption}>
+            <View style={styles.iconContainer}>
+              <View style={[styles.optionIcon, styles.logoutIcon]} />
+            </View>
+            <View style={styles.optionTextContainer}>
+              <Text style={styles.optionTitle}>Log Out</Text>
+              <Text style={styles.optionDescription}>Manage your device security</Text>
+            </View>
+            <Text style={styles.arrowIcon}>›</Text>
+          </TouchableOpacity>
+          
+          {/* More Section */}
+          <Text style={styles.sectionTitle}>More</Text>
+          
+          <TouchableOpacity style={styles.profileOption}>
+            <View style={styles.iconContainer}>
+              <View style={[styles.optionIcon, styles.helpIcon]} />
+            </View>
+            <View style={styles.optionTextContainer}>
+              <Text style={styles.optionTitle}>Help</Text>
+              <Text style={styles.optionDescription}>Get assistance for any queries</Text>
+            </View>
+            <Text style={styles.arrowIcon}>›</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.profileOption}>
+            <View style={styles.iconContainer}>
+              <View style={[styles.optionIcon, styles.aboutIcon]} />
+            </View>
+            <View style={styles.optionTextContainer}>
+              <Text style={styles.optionTitle}>About</Text>
+              <Text style={styles.optionDescription}>Find out about the app</Text>
+            </View>
+            <Text style={styles.arrowIcon}>›</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -741,7 +858,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: '30%',
-    backgroundColor: '#FFFFFF', // Changed from #E8F5F0 to white
+    backgroundColor: '#FFFFFF',
     borderBottomLeftRadius: 200,
     borderBottomRightRadius: 200,
   },
@@ -792,60 +909,7 @@ const styles = StyleSheet.create({
   rightLeaf: {
     right: 0,
     transform: [{ rotate: '45deg' }],
-  },
-  // App Icon for Home Screen (Shopping Bag with Sprout)
-  appIconContainer: {
-    width: 120,
-    height: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 15,
-  },
-  appIcon: {
-    width: 100,
-    height: 100,
-    borderRadius: 20,
-    backgroundColor: '#006E29',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bagOutline: {
-    width: 60,
-    height: 60,
-    borderWidth: 4,
-    borderColor: 'white',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  sproutStem: {
-    width: 4,
-    height: 20,
-    backgroundColor: 'white',
-    position: 'absolute',
-    top: -10,
-  },
-  sproutLeftLeaf: {
-    width: 15,
-    height: 15,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    position: 'absolute',
-    top: -15,
-    left: 10,
-    transform: [{ rotate: '-30deg' }],
-  },
-  sproutRightLeaf: {
-    width: 15,
-    height: 15,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    position: 'absolute',
-    top: -15,
-    right: 10,
-    transform: [{ rotate: '30deg' }],
-  },
+  } as ViewStyle,
   headerSection: {
     marginTop: 20,
     marginBottom: 10,
@@ -1309,5 +1373,154 @@ const styles = StyleSheet.create({
   backButtonText: {
     fontSize: 24,
     color: '#006E29',
+  },
+  profileContainer: {
+    flex: 1,
+    backgroundColor: '#E8F5F0',
+  },
+  profileHeader: {
+    height: 200,
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileHeaderCurve: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '100%',
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
+  },
+  profileTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#006E29',
+    marginTop: 150,
+  },
+  userProfileCard: {
+    width: '90%',
+    height: '90%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 5,
+    alignItems: 'center',
+    marginTop: 50,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  userAvatarContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    backgroundColor: '#E8F5F0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  userAvatar: {
+    width: 30,
+    height: 30,
+    borderRadius: 40,
+    backgroundColor: '#006E29',
+  },
+  userName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginLeft: 100,
+  },
+  userEmail: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 20,
+  },
+  editProfileButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  editProfileIcon: {
+    fontSize: 20,
+    color: '#006E29',
+  },
+  profileSections: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  profileOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#E8F5F0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  optionIcon: {
+    width: 24,
+    height: 24,
+    backgroundColor: '#006E29',
+    borderRadius: 12,
+  },
+  optionTextContainer: {
+    flex: 1,
+    marginLeft: 15,
+  },
+  optionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  optionDescription: {
+    fontSize: 14,
+    color: '#666',
+  },
+  arrowIcon: {
+    fontSize: 24,
+    color: '#006E29',
+  },
+  historyIcon: {
+    backgroundColor: '#FFD700', // Example color, adjust as needed
+  },
+  settingsIcon: {
+    backgroundColor: '#4A90E2', // Example color, adjust as needed
+  },
+  addressIcon: {
+    backgroundColor: '#FF6347', // Example color, adjust as needed
+  },
+  logoutIcon: {
+    backgroundColor: '#FF0000', // Example color, adjust as needed
+  },
+  helpIcon: {
+    backgroundColor: '#FFD700', // Example color, adjust as needed
+  },
+  aboutIcon: {
+    backgroundColor: '#8A2BE2', // Example color, adjust as needed
   },
 });
