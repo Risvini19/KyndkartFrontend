@@ -210,7 +210,7 @@ function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProps) {
           <Text style={styles.appName}>KyndKart</Text>
           
           {/* Login Title */}
-          <Text style={styles.loginTitle}>Login To Your Account</Text>
+          <Text style={styles.loginTitle}> Hi,Login To Your Account</Text>
           
           {/* Email Field */}
           <View style={styles.inputGroup}>
