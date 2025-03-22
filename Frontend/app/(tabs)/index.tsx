@@ -12,8 +12,8 @@ interface OTPVerificationScreenProps {
 export default function KyndKartApp() {
   const [currentScreen, setCurrentScreen] = useState('login'); // 'login', 'register', 'otp', 'home', 'shopRegister', 'ngoRegister', 'profile'
   const [email, setEmail] = useState('');
-  const [userName, setUserName] = useState('Huzrin Hussain');
-  const [userEmail, setUserEmail] = useState('huzrinhussain@gmail.com');
+  const [userName, setUserName] = useState('Tharumarasa Risvini');
+  const [userEmail, setUserEmail] = useState('risvini2001@gmail.com');
   
   // Screen navigation handlers
   const handleLogin = () => setCurrentScreen('otp');
@@ -107,7 +107,7 @@ function HomeScreen({ onLogout, onShopRegister, onNGORegister, onProfilePress }:
         {/* Welcome Message */}
         <Text style={styles.loginGreeting}>Thank you for logging in!</Text>
         <Text style={styles.homeDescription}>
-          This is your home screen. Here you can access all your KyndKart features.
+        This is your dashboard. Here, you can explore and access all your KyndKart features.
         </Text>
         
         {/* Feature Navigation */}
