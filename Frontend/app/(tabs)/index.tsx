@@ -11,6 +11,12 @@ import {
   Image
 } from 'react-native';
 
+interface OTPVerificationScreenProps {
+  otpValues: string[];
+  handleOtpChange: (text: string, index: number) => void;
+  onVerify: () => void;
+}
+
 export default function KyndKartApp() {
   const [currentScreen, setCurrentScreen] = useState('login'); // 'login', 'register', 'otp', or 'home'
   const [email, setEmail] = useState('');
@@ -31,7 +37,15 @@ export default function KyndKartApp() {
       setCurrentScreen('otp');
     }} onGoToLogin={handleGoToLogin} />;
   } else if (currentScreen === 'otp') {
-    return <OTPVerificationScreen email={email} onVerify={handleVerify} onResend={() => {}} />;
+    const [otpValues, setOtpValues] = useState(['', '', '', '']);
+    
+    const handleOtpChange = (text: string, index: number) => {
+      const newOtpValues = [...otpValues];
+      newOtpValues[index] = text;
+      setOtpValues(newOtpValues);
+    };
+
+    return <OTPVerificationScreen email={email} otpValues={otpValues} handleOtpChange={handleOtpChange} onVerify={handleVerify} onResend={() => {}} />;
   } else {
     return <LoginScreen onLogin={(email) => {
       setEmail(email);
@@ -474,38 +488,36 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 200,
     zIndex: -1,
   },
+  logoPlaceholder: {
+    width: 100,
+    height: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E8F5F0',
+    borderRadius: 50,
+    marginBottom: 20,
+  },
   logoContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-start',
     paddingTop: 40,
     zIndex: 1,
-  },
-  loginContainer: {
-    flex: 1,
-    paddingHorizontal: 30,
-    paddingTop: 80,
-    zIndex: 1,
-    alignItems: 'center',
-  },
-  otpContainer: {
-    flex: 1,
-    paddingHorizontal: 30,
-    paddingTop: 80,
-    zIndex: 1,
-    alignItems: 'center',
-  },
-  // Updated logo styles
-  logoPlaceholder: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#006E29',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginBottom: 10,
-  },
+},
+loginContainer: {
+  flex: 1,
+  paddingHorizontal: 30,
+  paddingTop: 80,
+  zIndex: 1,
+  alignItems: 'center',
+},
+otpContainer: {
+  flex: 1,
+  paddingHorizontal: 30,
+  paddingTop: 80,
+  zIndex: 1,
+  alignItems: 'center',
+},
   logoInner: {
     width: 70,
     height: 70,
