@@ -8,17 +8,11 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Image
+  ScrollView
 } from 'react-native';
 
-interface OTPVerificationScreenProps {
-  otpValues: string[];
-  handleOtpChange: (text: string, index: number) => void;
-  onVerify: () => void;
-}
-
 export default function KyndKartApp() {
-  const [currentScreen, setCurrentScreen] = useState('login'); // 'login', 'register', 'otp', or 'home'
+  const [currentScreen, setCurrentScreen] = useState('login'); // 'login', 'register', 'otp', 'home', 'shopRegister'
   const [email, setEmail] = useState('');
   
   // Screen navigation handlers
@@ -27,25 +21,20 @@ export default function KyndKartApp() {
   const handleLogout = () => setCurrentScreen('login');
   const handleGoToRegister = () => setCurrentScreen('register');
   const handleGoToLogin = () => setCurrentScreen('login');
+  const handleGoToShopRegister = () => setCurrentScreen('shopRegister');
   
   // Render the appropriate screen
   if (currentScreen === 'home') {
-    return <HomeScreen onLogout={handleLogout} />;
+    return <HomeScreen onLogout={handleLogout} onShopRegister={handleGoToShopRegister} />;
   } else if (currentScreen === 'register') {
     return <RegisterScreen onRegisterComplete={(email: string) => {
       setEmail(email);
       setCurrentScreen('otp');
     }} onGoToLogin={handleGoToLogin} />;
   } else if (currentScreen === 'otp') {
-    const [otpValues, setOtpValues] = useState(['', '', '', '']);
-    
-    const handleOtpChange = (text: string, index: number) => {
-      const newOtpValues = [...otpValues];
-      newOtpValues[index] = text;
-      setOtpValues(newOtpValues);
-    };
-
-    return <OTPVerificationScreen email={email} otpValues={otpValues} handleOtpChange={handleOtpChange} onVerify={handleVerify} onResend={() => {}} />;
+    return <OTPVerificationScreen email={email} onVerify={handleVerify} onResend={() => {}} />;
+  } else if (currentScreen === 'shopRegister') {
+    return <ShopRegisterScreen onGoBack={() => setCurrentScreen('home')} onSubmit={() => setCurrentScreen('home')} />;
   } else {
     return <LoginScreen onLogin={(email) => {
       setEmail(email);
@@ -54,14 +43,15 @@ export default function KyndKartApp() {
   }
 }
 
-// Updated app logo component that will be consistent across all screens
+// Updated app logo component with circular emblem and leaf design
 function AppLogo() {
   return (
-    <View style={styles.logoPlaceholder}>
-      <View style={styles.logoInner}>
-        {/* Leaf elements for the new logo */}
-        <View style={styles.leftLeaf}></View>
-        <View style={styles.rightLeaf}></View>
+    <View style={styles.logoContainer}>
+      <View style={styles.logoBackground}>
+        <View style={styles.leafContainer}>
+          <View style={[styles.leaf, styles.leftLeaf]} />
+          <View style={[styles.leaf, styles.rightLeaf]} />
+        </View>
       </View>
     </View>
   );
@@ -69,90 +59,101 @@ function AppLogo() {
 
 interface HomeScreenProps {
   onLogout: () => void;
+  onShopRegister: () => void;
 }
 
-function HomeScreen({ onLogout }: HomeScreenProps) {
+function HomeScreen({ onLogout, onShopRegister }: HomeScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <View style={styles.homeContent}>
         {/* Top curved background */}
         <View style={styles.topCurve} />
         
-        {/* Logo and app name */}
-        <View style={styles.logoContainer}>
-          {/* Updated Logo */}
-          <AppLogo />
-          
-          {/* Main Title */}
-          <Text style={styles.appName}>KyndKart</Text>
-          <Text style={styles.mainTitle}>Want To Share Food?</Text>
-          
-          {/* Option Cards */}
-          <View style={styles.optionsContainer}>
-            {/* Donate Option */}
-            <View style={styles.optionCard}>
-              <View style={styles.optionIconContainer}>
-                <View style={styles.handsIcon}>
-                  <View style={styles.droplet}></View>
-                  <View style={styles.leftHand}></View>
-                  <View style={styles.rightHand}></View>
-                </View>
-              </View>
-              <Text style={styles.optionTitle}>Donate Your Food</Text>
-              <Text style={styles.optionSubtitle}>Donate Your Food</Text>
+        {/* Header Section */}
+        <View style={styles.headerSection}>
+          <Text style={styles.welcomeText}>Welcome to KyndKart</Text>
+        </View>
+        
+        {/* App Icon - Shopping bag with sprout */}
+        <View style={styles.appIconContainer}>
+          <View style={styles.appIcon}>
+            <View style={styles.bagOutline}>
+              <View style={styles.sproutStem} />
+              <View style={styles.sproutLeftLeaf} />
+              <View style={styles.sproutRightLeaf} />
             </View>
-            
-            {/* Receive Option */}
-            <View style={styles.optionCard}>
-              <View style={styles.receiveIconContainer}>
-                <View style={styles.handshakeIcon}>
-                  <View style={styles.leftHandshake}></View>
-                  <View style={styles.rightHandshake}></View>
-                </View>
-              </View>
-              <Text style={styles.optionTitle}>Receive Your Food</Text>
-              <Text style={styles.optionSubtitle}>Routes usable food</Text>
-            </View>
-          </View>
-          
-          {/* Logout Button - Repositioned above illustration */}
-          <TouchableOpacity style={styles.logoutButtonNew} onPress={onLogout}>
-            <Text style={styles.logoutButtonText}>Logout</Text>
-          </TouchableOpacity>
-          
-          {/* Improved Illustration - Simple Food Sharing Scene */}
-          <View style={styles.improvedIllustration}>
-            {/* Table */}
-            <View style={styles.foodTable}></View>
-            
-            {/* Food plate */}
-            <View style={styles.foodPlate}>
-              {/* Food items */}
-              <View style={styles.foodItem1}></View>
-              <View style={styles.foodItem2}></View>
-              <View style={styles.foodItem3}></View>
-            </View>
-            
-            {/* People */}
-            <View style={styles.personLeft}>
-              <View style={styles.personHead}></View>
-              <View style={styles.personBody}></View>
-            </View>
-            
-            <View style={styles.personRight}>
-              <View style={styles.personHead}></View>
-              <View style={styles.personBody}></View>
-            </View>
-            
-            {/* Sharing arrow */}
-            <View style={styles.sharingArrow}></View>
-          </View>
-          
-          {/* Bottom Banner */}
-          <View style={styles.bottomBanner}>
-            <Text style={styles.bannerText}>I'm so hungry, need some food!</Text>
           </View>
         </View>
+        
+        {/* App Name */}
+        <Text style={styles.appNameLarge}>KyndKart</Text>
+        
+        {/* Welcome Message */}
+        <Text style={styles.loginGreeting}>Thank you for logging in!</Text>
+        <Text style={styles.homeDescription}>
+          This is your home screen. Here you can access all your KyndKart features.
+        </Text>
+        
+        {/* Feature Navigation */}
+        <View style={styles.featuresGrid}>
+          <View style={styles.featureRow}>
+            {/* Shop Button with cart icon */}
+            <TouchableOpacity style={styles.featureButton} onPress={onShopRegister}>
+              <View style={styles.featureIconContainer}>
+                <View style={styles.cartIconContainer}>
+                  <View style={styles.cartIcon} />
+                  <View style={styles.cartHandle} />
+                  <View style={styles.cartWheel1} />
+                  <View style={styles.cartWheel2} />
+                </View>
+              </View>
+              <Text style={styles.featureButtonText}>Shop</Text>
+            </TouchableOpacity>
+            
+            {/* Donations Button with heart icon */}
+            <TouchableOpacity style={styles.featureButton}>
+              <View style={styles.featureIconContainer}>
+                <View style={styles.heartIconContainer}>
+                  <View style={styles.heartShape} />
+                </View>
+              </View>
+              <Text style={styles.featureButtonText}>Donations</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <View style={styles.featureRow}>
+            {/* Profile Button with person icon */}
+            <TouchableOpacity style={styles.featureButton}>
+              <View style={styles.featureIconContainer}>
+                <View style={styles.personIconContainer}>
+                  <View style={styles.personHead} />
+                  <View style={styles.personBody} />
+                </View>
+              </View>
+              <Text style={styles.featureButtonText}>Profile</Text>
+            </TouchableOpacity>
+            
+            {/* Settings Button with gear icon */}
+            <TouchableOpacity style={styles.featureButton}>
+              <View style={styles.featureIconContainer}>
+                <View style={styles.gearIconContainer}>
+                  <View style={styles.gearOuter} />
+                  <View style={styles.gearInner} />
+                  <View style={styles.gearTooth1} />
+                  <View style={styles.gearTooth2} />
+                  <View style={styles.gearTooth3} />
+                  <View style={styles.gearTooth4} />
+                </View>
+              </View>
+              <Text style={styles.featureButtonText}>Settings</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        
+        {/* Logout Button */}
+        <TouchableOpacity style={styles.newLogoutButton} onPress={onLogout}>
+          <Text style={styles.newLogoutButtonText}>Logout</Text>
+        </TouchableOpacity>
         
         {/* Bottom curved background */}
         <View style={styles.bottomCurve} />
@@ -326,11 +327,11 @@ function RegisterScreen({ onRegisterComplete, onGoToLogin }: RegisterScreenProps
             />
           </View>
           
-          {/* Confirm Password Field */}
+          {/* Confirm Password Field - removed highlighting */}
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Confirm Password</Text>
             <TextInput
-              style={[styles.input, styles.highlightedInput]}
+              style={styles.input}
               placeholder="Confirm Password"
               placeholderTextColor="#999"
               secureTextEntry
@@ -375,6 +376,7 @@ interface OTPVerificationScreenProps {
 
 function OTPVerificationScreen({ email, onVerify, onResend }: OTPVerificationScreenProps) {
   const [otp, setOtp] = useState(['', '', '', '']);
+  const [activeInput, setActiveInput] = useState(-1);
   const inputRefs = useRef<(TextInput | null)[]>([]);
   
   // Handle OTP input change
@@ -409,9 +411,6 @@ function OTPVerificationScreen({ email, onVerify, onResend }: OTPVerificationScr
           {/* Updated Logo */}
           <AppLogo />
           
-          {/* App Name */}
-          <Text style={styles.appName}>KyndKart</Text>
-          
           {/* OTP Title */}
           <Text style={styles.otpTitle}>OTP Verification</Text>
           
@@ -427,12 +426,17 @@ function OTPVerificationScreen({ email, onVerify, onResend }: OTPVerificationScr
               <TextInput
                 key={index}
                 ref={(ref) => (inputRefs.current[index] = ref)}
-                style={styles.otpInput}
+                style={[
+                  styles.otpInput,
+                  activeInput === index ? styles.otpInputActive : {}
+                ]}
                 value={otp[index]}
                 onChangeText={(text) => handleOtpChange(text, index)}
                 onKeyPress={(e) => handleKeyPress(e, index)}
                 keyboardType="number-pad"
                 maxLength={1}
+                onFocus={() => setActiveInput(index)}
+                onBlur={() => setActiveInput(-1)}
               />
             ))}
           </View>
@@ -458,14 +462,138 @@ function OTPVerificationScreen({ email, onVerify, onResend }: OTPVerificationScr
   );
 }
 
+// New Shop Register Screen
+interface ShopRegisterScreenProps {
+  onGoBack: () => void;
+  onSubmit: () => void;
+}
+
+function ShopRegisterScreen({ onGoBack, onSubmit }: ShopRegisterScreenProps) {
+  const [businessName, setBusinessName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [location, setLocation] = useState('');
+  const [businessType, setBusinessType] = useState('');
+  const [operatingHours, setOperatingHours] = useState('');
+  const [registrationNumber, setRegistrationNumber] = useState('');
+
+  // Function to handle location selection
+  const handleLocationSelect = () => {
+    // This would typically call a location picker API
+    // For demonstration, just set a sample location
+    setLocation('123 Main St, City Name');
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.content}
+      >
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.registerFormContainer}>
+            {/* Back Button */}
+            <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
+              <Text style={styles.backButtonText}>←</Text>
+            </TouchableOpacity>
+            
+            {/* Form Title */}
+            <Text style={styles.registerFormTitle}>Register</Text>
+            
+            {/* Business Name Field */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Business/Organization Name</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Your Business/Organization Name"
+                placeholderTextColor="#999"
+                value={businessName}
+                onChangeText={setBusinessName}
+              />
+            </View>
+            
+            {/* Phone Number Field */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Phone Number</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Your Phone Number"
+                placeholderTextColor="#999"
+                keyboardType="phone-pad"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+              />
+            </View>
+            
+            {/* Location Field - Updated for selection */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Location</Text>
+              <TouchableOpacity 
+                style={styles.locationInputContainer}
+                onPress={handleLocationSelect}
+              >
+                <Text style={styles.locationIcon}>📍</Text>
+                <TextInput
+                  style={styles.locationInput}
+                  placeholder="Your Location"
+                  placeholderTextColor="#999"
+                  value={location}
+                  onChangeText={setLocation}
+                />
+              </TouchableOpacity>
+            </View>
+            
+            {/* Business Type Field */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Business/Organization Type</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Your Business/Organization Type"
+                placeholderTextColor="#999"
+                value={businessType}
+                onChangeText={setBusinessType}
+              />
+            </View>
+            
+            {/* Operating Hours Field */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Operating Hours</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Your Operating Hours"
+                placeholderTextColor="#999"
+                value={operatingHours}
+                onChangeText={setOperatingHours}
+              />
+            </View>
+            
+            {/* Submit Button - Fixed styling */}
+            <TouchableOpacity style={styles.submitButton} onPress={onSubmit}>
+              <Text style={styles.submitButton}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E8F5F0',
   },
   content: {
     flex: 1,
     position: 'relative',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  homeContent: {
+    flex: 1,
+    position: 'relative',
+    alignItems: 'center',
+    paddingTop: 30,
   },
   topCurve: {
     position: 'absolute',
@@ -473,7 +601,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: '30%',
-    backgroundColor: '#E8F5F0',
+    backgroundColor: '#FFFFFF', // Changed from #E8F5F0 to white
     borderBottomLeftRadius: 200,
     borderBottomRightRadius: 200,
   },
@@ -488,420 +616,134 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 200,
     zIndex: -1,
   },
-  logoPlaceholder: {
+  logoContainer: {
     width: 100,
     height: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#E8F5F0',
-    borderRadius: 50,
-    marginBottom: 20,
+    marginBottom: 10,
   },
-  logoContainer: {
-    flex: 1,
+  logoBackground: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#006E29',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingTop: 40,
-    zIndex: 1,
-},
-loginContainer: {
-  flex: 1,
-  paddingHorizontal: 30,
-  paddingTop: 80,
-  zIndex: 1,
-  alignItems: 'center',
-},
-otpContainer: {
-  flex: 1,
-  paddingHorizontal: 30,
-  paddingTop: 80,
-  zIndex: 1,
-  alignItems: 'center',
-},
-  logoInner: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    justifyContent: 'center',
+  },
+  leafContainer: {
+    width: 60,
+    height: 30,
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  // New leaf logo elements
-  leftLeaf: {
+  leaf: {
     position: 'absolute',
-    left: 15,
-    width: 20,
-    height: 40,
+    width: 30,
+    height: 30,
     backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    transform: [{ rotate: '-30deg' }],
+    borderRadius: 50,
+  },
+  leftLeaf: {
+    left: 0,
+    transform: [{ rotate: '-45deg' }],
   },
   rightLeaf: {
-    position: 'absolute',
-    right: 15,
-    width: 20,
-    height: 40,
+    right: 0,
+    transform: [{ rotate: '45deg' }],
+  },
+  // App Icon for Home Screen (Shopping Bag with Sprout)
+  appIconContainer: {
+    width: 120,
+    height: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 15,
+  },
+  appIcon: {
+    width: 100,
+    height: 100,
+    borderRadius: 20,
+    backgroundColor: '#006E29',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bagOutline: {
+    width: 60,
+    height: 60,
+    borderWidth: 4,
+    borderColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  sproutStem: {
+    width: 4,
+    height: 20,
     backgroundColor: 'white',
-    borderTopRightRadius: 20,
-    borderBottomLeftRadius: 20,
+    position: 'absolute',
+    top: -10,
+  },
+  sproutLeftLeaf: {
+    width: 15,
+    height: 15,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    position: 'absolute',
+    top: -15,
+    left: 10,
+    transform: [{ rotate: '-30deg' }],
+  },
+  sproutRightLeaf: {
+    width: 15,
+    height: 15,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    position: 'absolute',
+    top: -15,
+    right: 10,
     transform: [{ rotate: '30deg' }],
   },
-  // Old utensil logo elements (keeping for reference)
-  spoon: {
-    position: 'absolute',
-    left: 20,
-    width: 4,
-    height: 40,
-    backgroundColor: 'white',
-    borderRadius: 2,
-    display: 'none', // Hide old logo elements
-  },
-  fork: {
-    position: 'absolute',
-    left: 40,
-    width: 4,
-    height: 40,
-    backgroundColor: 'white',
-    borderRadius: 2,
-    display: 'none', // Hide old logo elements
-  },
-  knife: {
-    position: 'absolute',
-    left: 60,
-    width: 4,
-    height: 40,
-    backgroundColor: 'white',
-    borderRadius: 2,
-    display: 'none', // Hide old logo elements
-  },
-  arrow: {
-    position: 'absolute',
-    top: 50,
-    width: 20,
-    height: 20,
-    borderTopWidth: 4,
-    borderRightWidth: 4,
-    borderColor: 'white',
-    transform: [{ rotate: '45deg' }],
-    display: 'none', // Hide old logo elements
-  },
-  // Old logout button (keeping for reference)
-  logoutButtonContainer: {
-    position: 'absolute',
-    top: 10,
-    right: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    backgroundColor: '#006E29',
-    borderRadius: 20,
-    zIndex: 10,
-    display: 'none', // Hide old logout button
-  },
-  // New logout button positioned where requested
-  logoutButtonNew: {
+  headerSection: {
     marginTop: 20,
-    marginBottom: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 50,
-    backgroundColor: '#FF5733', // Changed to orange for better visibility
-    borderRadius: 25,
+    marginBottom: 10,
     alignItems: 'center',
-    width: '80%',
   },
-  mainTitle: {
+  welcomeText: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#006E29',
-    marginBottom: 40,
-    marginTop: 10,
+    marginBottom: 20,
   },
-  optionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingHorizontal: 20,
-    marginBottom: 30,
-  },
-  optionCard: {
-    alignItems: 'center',
-    width: '45%',
-  },
-  optionIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#006E29',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
-  receiveIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 2,
-    borderColor: '#006E29',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
-  handsIcon: {
-    position: 'relative',
-    width: 50,
-    height: 50,
-  },
-  droplet: {
-    position: 'absolute',
-    top: 5,
-    left: 20,
-    width: 10,
-    height: 15,
-    backgroundColor: 'white',
-    borderRadius: 5,
-  },
-  leftHand: {
-    position: 'absolute',
-    bottom: 10,
-    left: 8,
-    width: 8,
-    height: 20,
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 10,
-    transform: [{ rotate: '-30deg' }],
-  },
-  rightHand: {
-    position: 'absolute',
-    bottom: 10,
-    right: 8,
-    width: 8,
-    height: 20,
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 10,
-    transform: [{ rotate: '30deg' }],
-  },
-  handshakeIcon: {
-    position: 'relative',
-    width: 50,
-    height: 50,
-  },
-  leftHandshake: {
-    position: 'absolute',
-    bottom: 15,
-    left: 10,
-    width: 15,
-    height: 15,
-    borderWidth: 2,
-    borderColor: '#006E29',
-    borderRadius: 5,
-    transform: [{ rotate: '45deg' }],
-  },
-  rightHandshake: {
-    position: 'absolute',
-    bottom: 15,
-    right: 10,
-    width: 15,
-    height: 15,
-    borderWidth: 2,
-    borderColor: '#006E29',
-    borderRadius: 5,
-    transform: [{ rotate: '-45deg' }],
-  },
-  optionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#006E29',
-    textAlign: 'center',
-  },
-  optionSubtitle: {
-    fontSize: 14,
-    color: '#888',
-    textAlign: 'center',
-  },
-  // Old illustration styles (keeping for reference)
-  illustrationContainer: {
+  loginContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: 70,
-    display: 'none', // Hide old illustration
-  },
-  tableContainer: {
-    width: 200,
-    height: 150,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    position: 'relative',
-    display: 'none', // Hide old illustration
-  },
-  table: {
-    width: 160,
-    height: 20,
-    backgroundColor: '#8B4513',
-    borderRadius: 5,
-    position: 'absolute',
-    bottom: 30,
-    display: 'none', // Hide old illustration
-  },
-  personContainer: {
-    position: 'relative',
-    height: 120,
-    width: 80,
-    alignItems: 'center',
-    display: 'none', // Hide old illustration
-  },
-  personBody: {
-    width: 40,
-    height: 60,
-    backgroundColor: '#F98866',
-    borderRadius: 10,
-    position: 'absolute',
-    bottom: 40,
-  },
-  personHead: {
-    width: 35,
-    height: 35,
-    backgroundColor: '#FFCC99',
-    borderRadius: 20,
-    position: 'absolute',
-    top: 0,
+    paddingHorizontal: 30,
+    paddingTop: 80,
+    zIndex: 1,
     alignItems: 'center',
   },
-  leftEye: {
-    width: 5,
-    height: 5,
-    backgroundColor: 'black',
-    borderRadius: 2.5,
-    position: 'absolute',
-    top: 10,
-    left: 8,
-    display: 'none', // Hide old illustration
-  },
-  rightEye: {
-    width: 5,
-    height: 5,
-    backgroundColor: 'black',
-    borderRadius: 2.5,
-    position: 'absolute',
-    top: 10,
-    right: 8,
-    display: 'none', // Hide old illustration
-  },
-  hungryMouth: {
-    width: 15,
-    height: 10,
-    backgroundColor: '#FF6666',
-    borderRadius: 5,
-    position: 'absolute',
-    bottom: 5,
-    display: 'none', // Hide old illustration
-  },
-  emptyPlate: {
-    width: 30,
-    height: 30,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 15,
-    position: 'absolute',
-    bottom: 20,
-    borderWidth: 2,
-    borderColor: '#CCCCCC',
-    display: 'none', // Hide old illustration
-  },
-  // New improved illustration
-  improvedIllustration: {
-    width: '100%',
-    height: 150,
-    position: 'relative',
-    marginBottom: 60,
-  },
-  foodTable: {
-    width: '80%',
-    height: 15,
-    backgroundColor: '#8B4513',
-    borderRadius: 5,
-    position: 'absolute',
-    bottom: 20,
-    left: '10%',
-  },
-  foodPlate: {
-    width: 60,
-    height: 60,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 30,
-    position: 'absolute',
-    bottom: 35,
-    left: '50%',
-    marginLeft: -30,
-    borderWidth: 2,
-    borderColor: '#DDD',
-    justifyContent: 'center',
+  otpContainer: {
+    flex: 1,
+    paddingHorizontal: 30,
+    paddingTop: 80,
+    zIndex: 1,
     alignItems: 'center',
   },
-  foodItem1: {
-    width: 20,
-    height: 15,
-    backgroundColor: '#FF9966',
-    borderRadius: 5,
-    position: 'absolute',
-    top: 10,
-  },
-  foodItem2: {
-    width: 25,
-    height: 10,
-    backgroundColor: '#90EE90',
-    borderRadius: 5,
-    position: 'absolute',
-    bottom: 15,
-    left: 10,
-  },
-  foodItem3: {
-    width: 15,
-    height: 15,
-    backgroundColor: '#FFC0CB',
-    borderRadius: 7.5,
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-  },
-  personLeft: {
-    position: 'absolute',
-    bottom: 40,
-    left: '20%',
-  },
-  personRight: {
-    position: 'absolute',
-    bottom: 40,
-    right: '20%',
-  },
-  sharingArrow: {
-    position: 'absolute',
-    top: 40,
-    left: '50%',
-    marginLeft: -15,
-    width: 30,
-    height: 30,
-    borderTopWidth: 5,
-    borderRightWidth: 5,
-    borderColor: '#006E29',
-    transform: [{ rotate: '45deg' }],
-  },
-  bottomBanner: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 60,
-    backgroundColor: '#006E29',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  bannerText: {
-    color: 'white',
-    fontSize: 18,
+  registerFormTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  registerFormContainer: {
+    flex: 1,
+    paddingHorizontal: 30,
+    paddingTop: 40,
+    paddingBottom: 40,
+    backgroundColor: '#E8F5F0',
   },
   appName: {
     fontSize: 28,
@@ -910,25 +752,218 @@ otpContainer: {
     marginBottom: 20,
     textAlign: 'center',
   },
+  appNameLarge: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#006E29',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  loginGreeting: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  homeDescription: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 30,
+    paddingHorizontal: 40,
+  },
+  featuresGrid: {
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+  featureRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  featureButton: {
+    width: '48%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  featureIconContainer: {
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  featureButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#006E29',
+  },
+  // New Shopping Cart Icon
+  cartIconContainer: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  cartIcon: {
+    width: 28,
+    height: 20,
+    borderWidth: 2,
+    borderColor: '#006E29',
+    borderRadius: 3,
+    position: 'absolute',
+    bottom: 5,
+  },
+  cartHandle: {
+    width: 12,
+    height: 10,
+    borderWidth: 2,
+    borderColor: '#006E29',
+    borderBottomWidth: 0,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    position: 'absolute',
+    top: 5,
+    right: 9,
+  },
+  cartWheel1: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#006E29',
+    position: 'absolute',
+    bottom: 0,
+    left: 8,
+  },
+  cartWheel2: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#006E29',
+    position: 'absolute',
+    bottom: 0,
+    right: 8,
+  },
+  // New Heart Icon
+  heartIconContainer: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heartShape: {
+    width: 24,
+    height: 24,
+    backgroundColor: '#006E29',
+    transform: [{ rotate: '45deg' }],
+    position: 'relative',
+  },
+  // New Person Icon
+  personIconContainer: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  personHead: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#006E29',
+    position: 'absolute',
+    top: 0,
+  },
+  personBody: {
+    width: 24,
+    height: 20,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    backgroundColor: '#006E29',
+    position: 'absolute',
+    bottom: 0,
+  },
+  // New Gear Icon
+  gearIconContainer: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  gearOuter: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 3,
+    borderColor: '#006E29',
+  },
+  gearInner: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#006E29',
+    position: 'absolute',
+  },
+  gearTooth1: {
+    width: 8,
+    height: 8,
+    backgroundColor: '#006E29',
+    position: 'absolute',
+    top: -4,
+  },
+  gearTooth2: {
+    width: 8,
+    height: 8,
+    backgroundColor: '#006E29',
+    position: 'absolute',
+    bottom: -4,
+  },
+  gearTooth3: {
+    width: 8,
+    height: 8,
+    backgroundColor: '#006E29',
+    position: 'absolute',
+    left: -4,
+  },
+  gearTooth4: {
+    width: 8,
+    height: 8,
+    backgroundColor: '#006E29',
+    position: 'absolute',
+    right: -4,
+  },
+  newLogoutButton: {
+    marginTop: 30,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    backgroundColor: '#006E29',
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 180,
+  },
+  newLogoutButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
   loginTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 20,
     textAlign: 'center',
-  },
-  logoutButton: {
-    marginTop: 20,
-    paddingVertical: 15,
-    backgroundColor: '#006E29',
-    borderRadius: 10,
-    alignItems: 'center',
-    width: '100%',
-  },
-  logoutButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   inputGroup: {
     marginBottom: 15,
@@ -949,10 +984,6 @@ otpContainer: {
     fontSize: 16,
     backgroundColor: '#F8F8F8',
     width: '100%',
-  },
-  highlightedInput: {
-    borderColor: '#006E29',
-    borderWidth: 2,
   },
   forgotPassword: {
     marginTop: 5,
@@ -1025,16 +1056,24 @@ otpContainer: {
     justifyContent: 'center',
     marginBottom: 20,
   },
+  locationInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   otpInput: {
     width: 50,
     height: 50,
-    borderWidth: 2,
-    borderColor: '#006E29',
+    borderWidth: 1,
+    borderColor: '#ccc',
     textAlign: 'center',
     fontSize: 20,
     borderRadius: 10,
     marginHorizontal: 5,
     backgroundColor: '#F8F8F8',
+  },
+  otpInputActive: {
+    borderColor: '#006E29',
+    borderWidth: 2,
   },
   resendContainer: {
     flexDirection: 'row',
@@ -1061,5 +1100,65 @@ otpContainer: {
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  submitButton: {
+    marginTop: 20,
+    paddingVertical: 5,
+    backgroundColor: '#006E29',
+    borderRadius: 8,
+    fontWeight: 'bold',
+    fontSize: 20,
+    textAlign: 'center',
+    color: 'white',
+    width: '100%',
+  },
+  backButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#006E29',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 100,
+  },
+  backButtonText: {
+    fontSize: 18,
+    color: '#006E29',
+    fontWeight: 'bold',
+  },
+  formGroup: {
+    marginBottom: 15,
+    width: '100%',
+  },
+  formInput: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    backgroundColor: '#F8F8F8',
+    width: '100%',
+  },
+  formLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  locationInput: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    backgroundColor: '#F8F8F8',
+    flex: 1,
+  },
+  locationIcon: {
+    fontSize: 24,
+    marginRight: 10,
   },
 });
