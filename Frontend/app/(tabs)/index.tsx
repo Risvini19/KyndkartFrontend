@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Text, Pressable } from 'react-native';
+import { Platform } from 'react-native';
+import { Image, StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Text, Pressable, ScrollView, KeyboardAvoidingView, ViewStyle } from 'react-native';
+import { useRef } from 'react';
 
 interface OTPVerificationScreenProps {
   otpValues: string[];
@@ -38,7 +40,13 @@ export default function KyndKartApp() {
       setCurrentScreen('otp');
     }} onGoToLogin={handleGoToLogin} />;
   } else if (currentScreen === 'otp') {
-    return <OTPVerificationScreen email={email} onVerify={handleVerify} onResend={() => {}} />;
+    return <OTPVerificationScreen 
+      email={email} 
+      otpValues={['', '', '', '']} 
+      handleOtpChange={(text, index) => {}} 
+      onVerify={handleVerify} 
+      onResend={() => {}} 
+    />;
   } else if (currentScreen === 'shopRegister') {
     return <ShopRegisterScreen onGoBack={() => setCurrentScreen('home')} onSubmit={() => setCurrentScreen('home')} />;
   } else if (currentScreen === 'ngoRegister') {
@@ -875,6 +883,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 10,
   },
+  logoBackground: {
+    width: 80,
+    height: 80,
+    backgroundColor: '#006E29',
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   logoPlaceholder: {
     width: 100,
     height: 100,
@@ -923,13 +939,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     alignItems: 'center',
   },
-  otpContainer: {
-    flex: 1,
-    paddingHorizontal: 30,
-    paddingTop: 80,
-    zIndex: 1,
-    alignItems: 'center',
-  },
+  // Removed duplicate otpContainer definition
   registerFormTitle: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -1525,3 +1535,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
 });
+
+
+// Removed incorrect useRef implementation. The correct useRef is already imported from React.
+// Removed incorrect useRef implementation. The correct useRef is already imported from React.
