@@ -7,7 +7,8 @@ import {
   TextInput, 
   TouchableOpacity,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Image
 } from 'react-native';
 
 export default function KyndKartApp() {
@@ -25,7 +26,7 @@ export default function KyndKartApp() {
   if (currentScreen === 'home') {
     return <HomeScreen onLogout={handleLogout} />;
   } else if (currentScreen === 'register') {
-    return <RegisterScreen onRegisterComplete={(email) => {
+    return <RegisterScreen onRegisterComplete={(email: string) => {
       setEmail(email);
       setCurrentScreen('otp');
     }} onGoToLogin={handleGoToLogin} />;
@@ -39,7 +40,24 @@ export default function KyndKartApp() {
   }
 }
 
-function HomeScreen({ onLogout }: { onLogout: () => void }) {
+// Updated app logo component that will be consistent across all screens
+function AppLogo() {
+  return (
+    <View style={styles.logoPlaceholder}>
+      <View style={styles.logoInner}>
+        {/* Leaf elements for the new logo */}
+        <View style={styles.leftLeaf}></View>
+        <View style={styles.rightLeaf}></View>
+      </View>
+    </View>
+  );
+}
+
+interface HomeScreenProps {
+  onLogout: () => void;
+}
+
+function HomeScreen({ onLogout }: HomeScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -48,21 +66,78 @@ function HomeScreen({ onLogout }: { onLogout: () => void }) {
         
         {/* Logo and app name */}
         <View style={styles.logoContainer}>
-          {/* Using a placeholder View instead of requiring an image that might not exist */}
-          <View style={styles.logoPlaceholder}>
-            <View style={styles.logoInner}>
-              {/* Left leaf */}
-              <View style={styles.leftLeaf}></View>
-              {/* Right leaf */}
-              <View style={styles.rightLeaf}></View>
+          {/* Updated Logo */}
+          <AppLogo />
+          
+          {/* Main Title */}
+          <Text style={styles.appName}>KyndKart</Text>
+          <Text style={styles.mainTitle}>Want To Share Food?</Text>
+          
+          {/* Option Cards */}
+          <View style={styles.optionsContainer}>
+            {/* Donate Option */}
+            <View style={styles.optionCard}>
+              <View style={styles.optionIconContainer}>
+                <View style={styles.handsIcon}>
+                  <View style={styles.droplet}></View>
+                  <View style={styles.leftHand}></View>
+                  <View style={styles.rightHand}></View>
+                </View>
+              </View>
+              <Text style={styles.optionTitle}>Donate Your Food</Text>
+              <Text style={styles.optionSubtitle}>Donate Your Food</Text>
+            </View>
+            
+            {/* Receive Option */}
+            <View style={styles.optionCard}>
+              <View style={styles.receiveIconContainer}>
+                <View style={styles.handshakeIcon}>
+                  <View style={styles.leftHandshake}></View>
+                  <View style={styles.rightHandshake}></View>
+                </View>
+              </View>
+              <Text style={styles.optionTitle}>Receive Your Food</Text>
+              <Text style={styles.optionSubtitle}>Routes usable food</Text>
             </View>
           </View>
-          <Text style={styles.appName}>KyndKart</Text>
           
-          {/* Logout Button */}
-          <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+          {/* Logout Button - Repositioned above illustration */}
+          <TouchableOpacity style={styles.logoutButtonNew} onPress={onLogout}>
             <Text style={styles.logoutButtonText}>Logout</Text>
           </TouchableOpacity>
+          
+          {/* Improved Illustration - Simple Food Sharing Scene */}
+          <View style={styles.improvedIllustration}>
+            {/* Table */}
+            <View style={styles.foodTable}></View>
+            
+            {/* Food plate */}
+            <View style={styles.foodPlate}>
+              {/* Food items */}
+              <View style={styles.foodItem1}></View>
+              <View style={styles.foodItem2}></View>
+              <View style={styles.foodItem3}></View>
+            </View>
+            
+            {/* People */}
+            <View style={styles.personLeft}>
+              <View style={styles.personHead}></View>
+              <View style={styles.personBody}></View>
+            </View>
+            
+            <View style={styles.personRight}>
+              <View style={styles.personHead}></View>
+              <View style={styles.personBody}></View>
+            </View>
+            
+            {/* Sharing arrow */}
+            <View style={styles.sharingArrow}></View>
+          </View>
+          
+          {/* Bottom Banner */}
+          <View style={styles.bottomBanner}>
+            <Text style={styles.bannerText}>I'm so hungry, need some food!</Text>
+          </View>
         </View>
         
         {/* Bottom curved background */}
@@ -72,7 +147,12 @@ function HomeScreen({ onLogout }: { onLogout: () => void }) {
   );
 }
 
-function LoginScreen({ onLogin, onGoToRegister }: { onLogin: (email: string) => void; onGoToRegister: () => void }) {
+interface LoginScreenProps {
+  onLogin: (email: string) => void;
+  onGoToRegister: () => void;
+}
+
+function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -92,15 +172,11 @@ function LoginScreen({ onLogin, onGoToRegister }: { onLogin: (email: string) => 
         <View style={styles.topCurve} />
         
         <View style={styles.loginContainer}>
-          {/* Logo */}
-          <View style={styles.logoPlaceholder}>
-            <View style={styles.logoInner}>
-              {/* Left leaf */}
-              <View style={styles.leftLeaf}></View>
-              {/* Right leaf */}
-              <View style={styles.rightLeaf}></View>
-            </View>
-          </View>
+          {/* Updated Logo */}
+          <AppLogo />
+          
+          {/* App Name */}
+          <Text style={styles.appName}>KyndKart</Text>
           
           {/* Login Title */}
           <Text style={styles.loginTitle}>Login To Your Account</Text>
@@ -162,7 +238,12 @@ function LoginScreen({ onLogin, onGoToRegister }: { onLogin: (email: string) => 
   );
 }
 
-function RegisterScreen({ onRegisterComplete, onGoToLogin }: { onRegisterComplete: (email: string) => void; onGoToLogin: () => void }) {
+interface RegisterScreenProps {
+  onRegisterComplete: (email: string) => void;
+  onGoToLogin: () => void;
+}
+
+function RegisterScreen({ onRegisterComplete, onGoToLogin }: RegisterScreenProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -184,15 +265,11 @@ function RegisterScreen({ onRegisterComplete, onGoToLogin }: { onRegisterComplet
         <View style={styles.topCurve} />
         
         <View style={styles.loginContainer}>
-          {/* Logo */}
-          <View style={styles.logoPlaceholder}>
-            <View style={styles.logoInner}>
-              {/* Left leaf */}
-              <View style={styles.leftLeaf}></View>
-              {/* Right leaf */}
-              <View style={styles.rightLeaf}></View>
-            </View>
-          </View>
+          {/* Updated Logo */}
+          <AppLogo />
+          
+          {/* App Name */}
+          <Text style={styles.appName}>KyndKart</Text>
           
           {/* Register Title */}
           <Text style={styles.loginTitle}>Create New Account</Text>
@@ -276,17 +353,17 @@ function RegisterScreen({ onRegisterComplete, onGoToLogin }: { onRegisterComplet
   );
 }
 
-function OTPVerificationScreen({ email, onVerify, onResend }: { email: string; onVerify: () => void; onResend: () => void }) {
+interface OTPVerificationScreenProps {
+  email: string;
+  onVerify: () => void;
+  onResend: () => void;
+}
+
+function OTPVerificationScreen({ email, onVerify, onResend }: OTPVerificationScreenProps) {
   const [otp, setOtp] = useState(['', '', '', '']);
   const inputRefs = useRef<(TextInput | null)[]>([]);
   
   // Handle OTP input change
-  interface OTPVerificationScreenProps {
-    email: string;
-    onVerify: () => void;
-    onResend: () => void;
-  }
-
   const handleOtpChange = (text: string, index: number) => {
     const newOtp = [...otp];
     newOtp[index] = text;
@@ -315,15 +392,11 @@ function OTPVerificationScreen({ email, onVerify, onResend }: { email: string; o
         <View style={styles.topCurve} />
         
         <View style={styles.otpContainer}>
-          {/* Logo */}
-          <View style={styles.logoPlaceholder}>
-            <View style={styles.logoInner}>
-              {/* Left leaf */}
-              <View style={styles.leftLeaf}></View>
-              {/* Right leaf */}
-              <View style={styles.rightLeaf}></View>
-            </View>
-          </View>
+          {/* Updated Logo */}
+          <AppLogo />
+          
+          {/* App Name */}
+          <Text style={styles.appName}>KyndKart</Text>
           
           {/* OTP Title */}
           <Text style={styles.otpTitle}>OTP Verification</Text>
@@ -404,7 +477,8 @@ const styles = StyleSheet.create({
   logoContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 40,
     zIndex: 1,
   },
   loginContainer: {
@@ -412,6 +486,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingTop: 80,
     zIndex: 1,
+    alignItems: 'center',
   },
   otpContainer: {
     flex: 1,
@@ -420,43 +495,401 @@ const styles = StyleSheet.create({
     zIndex: 1,
     alignItems: 'center',
   },
+  // Updated logo styles
   logoPlaceholder: {
     width: 100,
     height: 100,
-    borderRadius: 24,
+    borderRadius: 50,
     backgroundColor: '#006E29',
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   logoInner: {
-    width: 80,
-    height: 80,
-    borderRadius: 16,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  // New leaf logo elements
   leftLeaf: {
     position: 'absolute',
-    left: 18,
+    left: 15,
     width: 20,
-    height: 38,
+    height: 40,
     backgroundColor: 'white',
     borderTopLeftRadius: 20,
     borderBottomRightRadius: 20,
-    transform: [{ rotate:'-45deg' }],
+    transform: [{ rotate: '-30deg' }],
   },
   rightLeaf: {
     position: 'absolute',
-    right: 18,
+    right: 15,
     width: 20,
-    height: 38,
+    height: 40,
     backgroundColor: 'white',
     borderTopRightRadius: 20,
     borderBottomLeftRadius: 20,
+    transform: [{ rotate: '30deg' }],
+  },
+  // Old utensil logo elements (keeping for reference)
+  spoon: {
+    position: 'absolute',
+    left: 20,
+    width: 4,
+    height: 40,
+    backgroundColor: 'white',
+    borderRadius: 2,
+    display: 'none', // Hide old logo elements
+  },
+  fork: {
+    position: 'absolute',
+    left: 40,
+    width: 4,
+    height: 40,
+    backgroundColor: 'white',
+    borderRadius: 2,
+    display: 'none', // Hide old logo elements
+  },
+  knife: {
+    position: 'absolute',
+    left: 60,
+    width: 4,
+    height: 40,
+    backgroundColor: 'white',
+    borderRadius: 2,
+    display: 'none', // Hide old logo elements
+  },
+  arrow: {
+    position: 'absolute',
+    top: 50,
+    width: 20,
+    height: 20,
+    borderTopWidth: 4,
+    borderRightWidth: 4,
+    borderColor: 'white',
     transform: [{ rotate: '45deg' }],
+    display: 'none', // Hide old logo elements
+  },
+  // Old logout button (keeping for reference)
+  logoutButtonContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#006E29',
+    borderRadius: 20,
+    zIndex: 10,
+    display: 'none', // Hide old logout button
+  },
+  // New logout button positioned where requested
+  logoutButtonNew: {
+    marginTop: 20,
+    marginBottom: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 50,
+    backgroundColor: '#FF5733', // Changed to orange for better visibility
+    borderRadius: 25,
+    alignItems: 'center',
+    width: '80%',
+  },
+  mainTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#006E29',
+    marginBottom: 40,
+    marginTop: 10,
+  },
+  optionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 20,
+    marginBottom: 30,
+  },
+  optionCard: {
+    alignItems: 'center',
+    width: '45%',
+  },
+  optionIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#006E29',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  receiveIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 2,
+    borderColor: '#006E29',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  handsIcon: {
+    position: 'relative',
+    width: 50,
+    height: 50,
+  },
+  droplet: {
+    position: 'absolute',
+    top: 5,
+    left: 20,
+    width: 10,
+    height: 15,
+    backgroundColor: 'white',
+    borderRadius: 5,
+  },
+  leftHand: {
+    position: 'absolute',
+    bottom: 10,
+    left: 8,
+    width: 8,
+    height: 20,
+    borderWidth: 2,
+    borderColor: 'white',
+    borderRadius: 10,
+    transform: [{ rotate: '-30deg' }],
+  },
+  rightHand: {
+    position: 'absolute',
+    bottom: 10,
+    right: 8,
+    width: 8,
+    height: 20,
+    borderWidth: 2,
+    borderColor: 'white',
+    borderRadius: 10,
+    transform: [{ rotate: '30deg' }],
+  },
+  handshakeIcon: {
+    position: 'relative',
+    width: 50,
+    height: 50,
+  },
+  leftHandshake: {
+    position: 'absolute',
+    bottom: 15,
+    left: 10,
+    width: 15,
+    height: 15,
+    borderWidth: 2,
+    borderColor: '#006E29',
+    borderRadius: 5,
+    transform: [{ rotate: '45deg' }],
+  },
+  rightHandshake: {
+    position: 'absolute',
+    bottom: 15,
+    right: 10,
+    width: 15,
+    height: 15,
+    borderWidth: 2,
+    borderColor: '#006E29',
+    borderRadius: 5,
+    transform: [{ rotate: '-45deg' }],
+  },
+  optionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#006E29',
+    textAlign: 'center',
+  },
+  optionSubtitle: {
+    fontSize: 14,
+    color: '#888',
+    textAlign: 'center',
+  },
+  // Old illustration styles (keeping for reference)
+  illustrationContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 70,
+    display: 'none', // Hide old illustration
+  },
+  tableContainer: {
+    width: 200,
+    height: 150,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    position: 'relative',
+    display: 'none', // Hide old illustration
+  },
+  table: {
+    width: 160,
+    height: 20,
+    backgroundColor: '#8B4513',
+    borderRadius: 5,
+    position: 'absolute',
+    bottom: 30,
+    display: 'none', // Hide old illustration
+  },
+  personContainer: {
+    position: 'relative',
+    height: 120,
+    width: 80,
+    alignItems: 'center',
+    display: 'none', // Hide old illustration
+  },
+  personBody: {
+    width: 40,
+    height: 60,
+    backgroundColor: '#F98866',
+    borderRadius: 10,
+    position: 'absolute',
+    bottom: 40,
+  },
+  personHead: {
+    width: 35,
+    height: 35,
+    backgroundColor: '#FFCC99',
+    borderRadius: 20,
+    position: 'absolute',
+    top: 0,
+    alignItems: 'center',
+  },
+  leftEye: {
+    width: 5,
+    height: 5,
+    backgroundColor: 'black',
+    borderRadius: 2.5,
+    position: 'absolute',
+    top: 10,
+    left: 8,
+    display: 'none', // Hide old illustration
+  },
+  rightEye: {
+    width: 5,
+    height: 5,
+    backgroundColor: 'black',
+    borderRadius: 2.5,
+    position: 'absolute',
+    top: 10,
+    right: 8,
+    display: 'none', // Hide old illustration
+  },
+  hungryMouth: {
+    width: 15,
+    height: 10,
+    backgroundColor: '#FF6666',
+    borderRadius: 5,
+    position: 'absolute',
+    bottom: 5,
+    display: 'none', // Hide old illustration
+  },
+  emptyPlate: {
+    width: 30,
+    height: 30,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 15,
+    position: 'absolute',
+    bottom: 20,
+    borderWidth: 2,
+    borderColor: '#CCCCCC',
+    display: 'none', // Hide old illustration
+  },
+  // New improved illustration
+  improvedIllustration: {
+    width: '100%',
+    height: 150,
+    position: 'relative',
+    marginBottom: 60,
+  },
+  foodTable: {
+    width: '80%',
+    height: 15,
+    backgroundColor: '#8B4513',
+    borderRadius: 5,
+    position: 'absolute',
+    bottom: 20,
+    left: '10%',
+  },
+  foodPlate: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 30,
+    position: 'absolute',
+    bottom: 35,
+    left: '50%',
+    marginLeft: -30,
+    borderWidth: 2,
+    borderColor: '#DDD',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  foodItem1: {
+    width: 20,
+    height: 15,
+    backgroundColor: '#FF9966',
+    borderRadius: 5,
+    position: 'absolute',
+    top: 10,
+  },
+  foodItem2: {
+    width: 25,
+    height: 10,
+    backgroundColor: '#90EE90',
+    borderRadius: 5,
+    position: 'absolute',
+    bottom: 15,
+    left: 10,
+  },
+  foodItem3: {
+    width: 15,
+    height: 15,
+    backgroundColor: '#FFC0CB',
+    borderRadius: 7.5,
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+  },
+  personLeft: {
+    position: 'absolute',
+    bottom: 40,
+    left: '20%',
+  },
+  personRight: {
+    position: 'absolute',
+    bottom: 40,
+    right: '20%',
+  },
+  sharingArrow: {
+    position: 'absolute',
+    top: 40,
+    left: '50%',
+    marginLeft: -15,
+    width: 30,
+    height: 30,
+    borderTopWidth: 5,
+    borderRightWidth: 5,
+    borderColor: '#006E29',
+    transform: [{ rotate: '45deg' }],
+  },
+  bottomBanner: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 60,
+    backgroundColor: '#006E29',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bannerText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   appName: {
     fontSize: 28,
@@ -474,18 +907,20 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     marginTop: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 30,
+    paddingVertical: 15,
     backgroundColor: '#006E29',
-    borderRadius: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: '100%',
   },
   logoutButtonText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   inputGroup: {
     marginBottom: 15,
+    width: '100%',
   },
   inputLabel: {
     fontSize: 16,
@@ -501,6 +936,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 16,
     backgroundColor: '#F8F8F8',
+    width: '100%',
   },
   highlightedInput: {
     borderColor: '#006E29',
@@ -520,6 +956,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#006E29',
     borderRadius: 10,
     alignItems: 'center',
+    width: '100%',
   },
   loginButtonText: {
     color: 'white',
@@ -530,6 +967,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 20,
+    width: '100%',
   },
   dividerLine: {
     flex: 1,
@@ -602,6 +1040,7 @@ const styles = StyleSheet.create({
   },
   verifyButton: {
     paddingVertical: 15,
+    paddingHorizontal: 40,
     backgroundColor: '#006E29',
     borderRadius: 10,
     alignItems: 'center',
