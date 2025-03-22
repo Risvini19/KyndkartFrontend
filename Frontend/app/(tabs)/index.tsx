@@ -1,5 +1,10 @@
-import React, { useState } from 'react';
-import { Image, StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Text, Pressable } from 'react-native';
+import React, { useState, useRef} from 'react';
+import { Image, StyleSheet, View, SafeAreaView, KeyboardAvoidingView ,  TextInput, TouchableOpacity, Text, Pressable } from 'react-native';
+import { Platform } from 'react-native';
+
+
+
+
 
 interface OTPVerificationScreenProps {
   otpValues: string[];
@@ -405,6 +410,12 @@ const styles = StyleSheet.create({
     zIndex: 1,
     marginBottom: 20,
   },
+  loginContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
   logoPlaceholder: {
     width: 100,
     height: 100,
@@ -595,5 +606,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  otpContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
   },
 });
