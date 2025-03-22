@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 export default function KyndKartApp() {
-  const [currentScreen, setCurrentScreen] = useState('login'); // 'login', 'register', 'otp', 'home', 'shopRegister'
+  const [currentScreen, setCurrentScreen] = useState('login'); // 'login', 'register', 'otp', 'home', 'shopRegister', 'ngoRegister'
   const [email, setEmail] = useState('');
   
   // Screen navigation handlers
@@ -22,10 +22,15 @@ export default function KyndKartApp() {
   const handleGoToRegister = () => setCurrentScreen('register');
   const handleGoToLogin = () => setCurrentScreen('login');
   const handleGoToShopRegister = () => setCurrentScreen('shopRegister');
+  const handleGoToNGORegister = () => setCurrentScreen('ngoRegister');
   
   // Render the appropriate screen
   if (currentScreen === 'home') {
-    return <HomeScreen onLogout={handleLogout} onShopRegister={handleGoToShopRegister} />;
+    return <HomeScreen 
+      onLogout={handleLogout} 
+      onShopRegister={handleGoToShopRegister}
+      onNGORegister={handleGoToNGORegister} 
+    />;
   } else if (currentScreen === 'register') {
     return <RegisterScreen onRegisterComplete={(email: string) => {
       setEmail(email);
@@ -35,6 +40,8 @@ export default function KyndKartApp() {
     return <OTPVerificationScreen email={email} onVerify={handleVerify} onResend={() => {}} />;
   } else if (currentScreen === 'shopRegister') {
     return <ShopRegisterScreen onGoBack={() => setCurrentScreen('home')} onSubmit={() => setCurrentScreen('home')} />;
+  } else if (currentScreen === 'ngoRegister') {
+    return <NGORegisterScreen onGoBack={() => setCurrentScreen('home')} onSubmit={() => setCurrentScreen('home')} />;
   } else {
     return <LoginScreen onLogin={(email) => {
       setEmail(email);
@@ -60,9 +67,10 @@ function AppLogo() {
 interface HomeScreenProps {
   onLogout: () => void;
   onShopRegister: () => void;
+  onNGORegister: () => void;
 }
 
-function HomeScreen({ onLogout, onShopRegister }: HomeScreenProps) {
+function HomeScreen({ onLogout, onShopRegister, onNGORegister }: HomeScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.homeContent}>
@@ -110,8 +118,8 @@ function HomeScreen({ onLogout, onShopRegister }: HomeScreenProps) {
               <Text style={styles.featureButtonText}>Shop</Text>
             </TouchableOpacity>
             
-            {/* Donations Button with heart icon */}
-            <TouchableOpacity style={styles.featureButton}>
+            {/* Donations Button with heart icon - Updated to navigate to NGO registration */}
+            <TouchableOpacity style={styles.featureButton} onPress={onNGORegister}>
               <View style={styles.featureIconContainer}>
                 <View style={styles.heartIconContainer}>
                   <View style={styles.heartShape} />
@@ -462,7 +470,7 @@ function OTPVerificationScreen({ email, onVerify, onResend }: OTPVerificationScr
   );
 }
 
-// New Shop Register Screen
+// Shop Register Screen
 interface ShopRegisterScreenProps {
   onGoBack: () => void;
   onSubmit: () => void;
@@ -566,9 +574,141 @@ function ShopRegisterScreen({ onGoBack, onSubmit }: ShopRegisterScreenProps) {
               />
             </View>
             
-            {/* Submit Button - Fixed styling */}
-            <TouchableOpacity style={styles.submitButton} onPress={onSubmit}>
-              <Text style={styles.submitButton}>Submit</Text>
+            {/* Registration Number Field */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Registration Number</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Your Registration Number"
+                placeholderTextColor="#999"
+                value={registrationNumber}
+                onChangeText={setRegistrationNumber}
+              />
+            </View>
+            
+            {/* Submit Button */}
+            <TouchableOpacity 
+              style={styles.greenSubmitButton} 
+              onPress={onSubmit}
+            >
+              <Text style={styles.submitButtonText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
+
+// New NGO Register Screen based on the prototype
+interface NGORegisterScreenProps {
+  onGoBack: () => void;
+  onSubmit: () => void;
+}
+
+function NGORegisterScreen({ onGoBack, onSubmit }: NGORegisterScreenProps) {
+  const [ngoName, setNGOName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [location, setLocation] = useState('');
+  const [ngoType, setNGOType] = useState('');
+  const [registrationNumber, setRegistrationNumber] = useState('');
+
+  // Function to handle location selection
+  const handleLocationSelect = () => {
+    // This would typically call a location picker API
+    // For demonstration, just set a sample location
+    setLocation('123 Main St, City Name');
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.content}
+      >
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.registerFormContainer}>
+            {/* Back Button */}
+            <TouchableOpacity style={styles.backButtonSmall} onPress={onGoBack}>
+              <Text style={styles.backButtonText}>←</Text>
+            </TouchableOpacity>
+            
+            {/* Form Title */}
+            <Text style={styles.registerFormTitle}>Register</Text>
+            
+            {/* NGO Name Field */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>NGO/Organization Name</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Your NGO/Organization Name"
+                placeholderTextColor="#999"
+                value={ngoName}
+                onChangeText={setNGOName}
+              />
+            </View>
+            
+            {/* Phone Number Field */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Phone Number</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Your Phone Number"
+                placeholderTextColor="#999"
+                keyboardType="phone-pad"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+              />
+            </View>
+            
+            {/* Location Field */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Location</Text>
+              <TouchableOpacity 
+                style={styles.locationInputContainer}
+                onPress={handleLocationSelect}
+              >
+                <Text style={styles.locationIcon}>📍</Text>
+                <TextInput
+                  style={styles.locationInput}
+                  placeholder="Your Location"
+                  placeholderTextColor="#999"
+                  value={location}
+                  onChangeText={setLocation}
+                />
+              </TouchableOpacity>
+            </View>
+            
+            {/* NGO Type Field */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>NGO/Organization Type</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Your NGO/Organization Type"
+                placeholderTextColor="#999"
+                value={ngoType}
+                onChangeText={setNGOType}
+              />
+            </View>
+            
+            {/* Registration Number Field */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Registration Number</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Your Registration Number"
+                placeholderTextColor="#999"
+                value={registrationNumber}
+                onChangeText={setRegistrationNumber}
+              />
+            </View>
+            
+            {/* Submit Button - Using the green button style from prototype */}
+            <TouchableOpacity 
+              style={styles.greenSubmitButton} 
+              onPress={onSubmit}
+            >
+              <Text style={styles.submitButtonText}>Submit</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -753,29 +893,29 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   appNameLarge: {
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: 'bold',
     color: '#006E29',
     marginBottom: 10,
     textAlign: 'center',
   },
   loginGreeting: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 18,
     color: '#333',
     marginBottom: 10,
     textAlign: 'center',
   },
   homeDescription: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#666',
-    textAlign: 'center',
     marginBottom: 30,
-    paddingHorizontal: 40,
+    textAlign: 'center',
+    paddingHorizontal: 20,
   },
   featuresGrid: {
     width: '100%',
     paddingHorizontal: 20,
+    marginBottom: 30,
   },
   featureRow: {
     flexDirection: 'row',
@@ -785,7 +925,7 @@ const styles = StyleSheet.create({
   featureButton: {
     width: '48%',
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 15,
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -793,7 +933,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 3,
   },
   featureIconContainer: {
     width: 50,
@@ -802,101 +942,90 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 10,
   },
-  featureButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#006E29',
-  },
-  // New Shopping Cart Icon
   cartIconContainer: {
     width: 40,
     height: 40,
+    backgroundColor: '#006E29',
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
   cartIcon: {
-    width: 28,
+    width: 20,
     height: 20,
-    borderWidth: 2,
-    borderColor: '#006E29',
-    borderRadius: 3,
-    position: 'absolute',
-    bottom: 5,
+    backgroundColor: 'white',
+    borderRadius: 5,
   },
   cartHandle: {
-    width: 12,
+    width: 10,
     height: 10,
-    borderWidth: 2,
-    borderColor: '#006E29',
-    borderBottomWidth: 0,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
+    backgroundColor: 'white',
+    borderRadius: 5,
     position: 'absolute',
-    top: 5,
-    right: 9,
+    top: -5,
+    left: 15,
   },
   cartWheel1: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#006E29',
+    width: 8,
+    height: 8,
+    backgroundColor: 'white',
+    borderRadius: 4,
     position: 'absolute',
-    bottom: 0,
-    left: 8,
+    bottom: -5,
+    left: 5,
   },
   cartWheel2: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#006E29',
+    width: 8,
+    height: 8,
+    backgroundColor: 'white',
+    borderRadius: 4,
     position: 'absolute',
-    bottom: 0,
-    right: 8,
+    bottom: -5,
+    right: 5,
   },
-  // New Heart Icon
   heartIconContainer: {
     width: 40,
     height: 40,
+    backgroundColor: '#FF6B6B',
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   heartShape: {
-    width: 24,
-    height: 24,
-    backgroundColor: '#006E29',
+    width: 20,
+    height: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
     transform: [{ rotate: '45deg' }],
-    position: 'relative',
   },
-  // New Person Icon
   personIconContainer: {
     width: 40,
     height: 40,
+    backgroundColor: '#4A90E2',
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
   },
   personHead: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: '#006E29',
-    position: 'absolute',
-    top: 0,
+    width: 20,
+    height: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
   },
   personBody: {
-    width: 24,
-    height: 20,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    backgroundColor: '#006E29',
+    width: 20,
+    height: 10,
+    backgroundColor: 'white',
+    borderRadius: 5,
     position: 'absolute',
-    bottom: 0,
+    bottom: -5,
   },
-  // New Gear Icon
   gearIconContainer: {
     width: 40,
     height: 40,
+    backgroundColor: '#FFC107',
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -905,58 +1034,69 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    borderWidth: 3,
-    borderColor: '#006E29',
+    borderWidth: 4,
+    borderColor: 'white',
   },
   gearInner: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#006E29',
-    position: 'absolute',
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'white',
   },
   gearTooth1: {
-    width: 8,
-    height: 8,
-    backgroundColor: '#006E29',
+    width: 4,
+    height: 15,
+    backgroundColor: 'white',
     position: 'absolute',
-    top: -4,
+    top: -5,
+    left: 13,
+    transform: [{ rotate: '0deg' }],
   },
   gearTooth2: {
-    width: 8,
-    height: 8,
-    backgroundColor: '#006E29',
+    width: 4,
+    height: 15,
+    backgroundColor: 'white',
     position: 'absolute',
-    bottom: -4,
+    top: 13,
+    left: -5,
+    transform: [{ rotate: '90deg' }],
   },
   gearTooth3: {
-    width: 8,
-    height: 8,
-    backgroundColor: '#006E29',
+    width: 4,
+    height: 15,
+    backgroundColor: 'white',
     position: 'absolute',
-    left: -4,
+    top: 13,
+    right: -5,
+    transform: [{ rotate: '90deg' }],
   },
   gearTooth4: {
-    width: 8,
-    height: 8,
-    backgroundColor: '#006E29',
+    width: 4,
+    height: 15,
+    backgroundColor: 'white',
     position: 'absolute',
-    right: -4,
+    bottom: -5,
+    left: 13,
+    transform: [{ rotate: '0deg' }],
+  },
+  featureButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
   },
   newLogoutButton: {
-    marginTop: 30,
-    paddingVertical: 15,
-    paddingHorizontal: 40,
     backgroundColor: '#006E29',
     borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 180,
+    marginBottom: 20,
   },
   newLogoutButtonText: {
-    color: 'white',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
+    color: 'white',
   },
   loginTitle: {
     fontSize: 24,
@@ -966,86 +1106,88 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   inputGroup: {
-    marginBottom: 15,
     width: '100%',
+    marginBottom: 20,
   },
   inputLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
     color: '#333',
     marginBottom: 5,
   },
   input: {
+    width: '100%',
     height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
     paddingHorizontal: 15,
     fontSize: 16,
-    backgroundColor: '#F8F8F8',
-    width: '100%',
+    color: '#333',
+    borderWidth: 1,
+    borderColor: '#DDD',
   },
   forgotPassword: {
-    marginTop: 5,
     alignSelf: 'flex-end',
+    marginTop: 5,
   },
   forgotPasswordText: {
-    color: '#006E29',
     fontSize: 14,
+    color: '#006E29',
   },
   loginButton: {
-    marginTop: 20,
-    paddingVertical: 15,
-    backgroundColor: '#006E29',
-    borderRadius: 10,
-    alignItems: 'center',
     width: '100%',
+    height: 50,
+    backgroundColor: '#006E29',
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
   },
   loginButtonText: {
-    color: 'white',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
+    color: 'white',
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 20,
-    width: '100%',
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#ccc',
+    backgroundColor: '#DDD',
   },
   dividerText: {
-    marginHorizontal: 10,
     fontSize: 14,
     color: '#666',
+    marginHorizontal: 10,
   },
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: 10,
   },
   registerText: {
-    fontSize: 16,
-    color: '#333',
+    fontSize: 14,
+    color: '#666',
   },
   registerLink: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#006E29',
     fontWeight: 'bold',
   },
   otpTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#006E29',
+    color: '#333',
     marginBottom: 10,
+    textAlign: 'center',
   },
   otpInstructions: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#555',
+    fontSize: 14,
+    color: '#666',
     marginBottom: 20,
+    textAlign: 'center',
   },
   emailHighlight: {
     fontWeight: 'bold',
@@ -1053,27 +1195,23 @@ const styles = StyleSheet.create({
   },
   otpInputContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    width: '80%',
     marginBottom: 20,
-  },
-  locationInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   otpInput: {
     width: 50,
     height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    textAlign: 'center',
-    fontSize: 20,
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
-    marginHorizontal: 5,
-    backgroundColor: '#F8F8F8',
+    borderWidth: 1,
+    borderColor: '#DDD',
+    textAlign: 'center',
+    fontSize: 18,
+    color: '#333',
   },
   otpInputActive: {
     borderColor: '#006E29',
-    borderWidth: 2,
   },
   resendContainer: {
     flexDirection: 'row',
@@ -1081,84 +1219,95 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   resendText: {
-    fontSize: 16,
-    color: '#333',
+    fontSize: 14,
+    color: '#666',
   },
   resendLink: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#006E29',
     fontWeight: 'bold',
   },
   verifyButton: {
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    backgroundColor: '#006E29',
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  verifyButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  submitButton: {
-    marginTop: 20,
-    paddingVertical: 5,
-    backgroundColor: '#006E29',
-    borderRadius: 8,
-    fontWeight: 'bold',
-    fontSize: 20,
-    textAlign: 'center',
-    color: 'white',
     width: '100%',
-  },
-  backButton: {
-    marginTop: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    height: 50,
     backgroundColor: '#006E29',
-    borderRadius: 10,
+    borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 100,
   },
-  backButtonText: {
-    fontSize: 18,
-    color: '#006E29',
+  verifyButtonText: {
+    fontSize: 16,
     fontWeight: 'bold',
+    color: 'white',
   },
   formGroup: {
-    marginBottom: 15,
     width: '100%',
-  },
-  formInput: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    backgroundColor: '#F8F8F8',
-    width: '100%',
+    marginBottom: 20,
   },
   formLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
     color: '#333',
     marginBottom: 5,
   },
-  locationInput: {
+  formInput: {
+    width: '100%',
     height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
     paddingHorizontal: 15,
     fontSize: 16,
-    backgroundColor: '#F8F8F8',
-    flex: 1,
+    color: '#333',
+    borderWidth: 1,
+    borderColor: '#DDD',
+  },
+  locationInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    height: 50,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    borderWidth: 1,
+    borderColor: '#DDD',
   },
   locationIcon: {
-    fontSize: 24,
+    fontSize: 20,
     marginRight: 10,
+  },
+  locationInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+  },
+  greenSubmitButton: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#006E29',
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  submitButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    zIndex: 1,
+  },
+  backButtonSmall: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    zIndex: 1,
+  },
+  backButtonText: {
+    fontSize: 24,
+    color: '#006E29',
   },
 });
