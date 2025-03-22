@@ -837,6 +837,7 @@ function ProfileScreen({ userName, userEmail, onGoToHome }: ProfileScreenProps) 
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
