@@ -433,7 +433,7 @@ function OTPVerificationScreen({ email, onVerify, onResend }: OTPVerificationScr
           {/* OTP Instructions */}
           <Text style={styles.otpInstructions}>
             Enter 4 digit code sent to your{'\n'}
-            E-mail <Text style={styles.emailHighlight}>{email}</Text>
+            E-mail risvini2001@gmail.com <Text style={styles.emailHighlight}>{email}</Text>
           </Text>
           
           {/* OTP Input Fields */}
