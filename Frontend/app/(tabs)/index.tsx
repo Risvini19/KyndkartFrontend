@@ -217,7 +217,7 @@ function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProps) {
             <Text style={styles.inputLabel}>Email</Text>
             <TextInput
               style={styles.input}
-              placeholder="Your Email"
+              placeholder=" enter Your Email"
               placeholderTextColor="#999"
               keyboardType="email-address"
               value={email}
@@ -255,7 +255,7 @@ function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProps) {
           
           {/* Register Link */}
           <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>Don't have an account yet? </Text>
+            <Text style={styles.registerText}>New here? Create an account to get started! </Text>
             <TouchableOpacity onPress={onGoToRegister}>
               <Text style={styles.registerLink}>Register</Text>
             </TouchableOpacity>
@@ -370,7 +370,7 @@ function RegisterScreen({ onRegisterComplete, onGoToLogin }: RegisterScreenProps
           
           {/* Login Link */}
           <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>Already have an account? </Text>
+            <Text style={styles.registerText}>Have an account? Log in here! </Text>
             <TouchableOpacity onPress={onGoToLogin}>
               <Text style={styles.registerLink}>Log in</Text>
             </TouchableOpacity>
@@ -496,7 +496,7 @@ function ShopRegisterScreen({ onGoBack, onSubmit }: ShopRegisterScreenProps) {
   const handleLocationSelect = () => {
     // This would typically call a location picker API
     // For demonstration, just set a sample location
-    setLocation('123 Main St, City Name');
+    setLocation('28 Main Street, City Name');
   };
 
   return (
@@ -625,7 +625,7 @@ function NGORegisterScreen({ onGoBack, onSubmit }: NGORegisterScreenProps) {
   const handleLocationSelect = () => {
     // This would typically call a location picker API
     // For demonstration, just set a sample location
-    setLocation('123 Main St, City Name');
+    setLocation('28 Main Street, City Name');
   };
 
   return (
