@@ -4,59 +4,41 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Task, Donation
-from .serializers import UserSerializer, TaskSerializer, DonationSerializer
-
-@api_view(['POST'])
-def register(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['POST'])
-def login(request):
-    username = request.data.get('username')
-    password = request.data.get('password')
-    user = authenticate(username=username, password=password)
-    if user:
-        refresh = RefreshToken.for_user(user)
-        return Response({'refresh': str(refresh), 'access': str(refresh.access_token)})
-    return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+from .models import Task, Donation, ShopDonation, ReceiverDonation
+from .serializers import TaskSerializer, DonationSerializer, ShopDonationSerializer, ReceiverDonationSerializer
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def add_task(request):
+def shop_donate(request):
     data = request.data
-    data['user'] = request.user.id
-    serializer = TaskSerializer(data=data)
+    data['shop'] = request.user.id
+    serializer = ShopDonationSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        return Response({'message': 'Task added successfully'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'Shop donation successful'}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_tasks(request):
-    tasks = Task.objects.filter(user=request.user)
-    serializer = TaskSerializer(tasks, many=True)
+def get_shop_donations(request):
+    donations = ShopDonation.objects.all()
+    serializer = ShopDonationSerializer(donations, many=True)
     return Response(serializer.data)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def donate(request):
+def admin_to_receiver(request):
     data = request.data
-    data['donor'] = request.user.id
-    serializer = DonationSerializer(data=data)
+    data['receiver'] = request.user.id
+    serializer = ReceiverDonationSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        return Response({'message': 'Donation successful'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'Items successfully sent to receiver'}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_donations(request):
-    donations = Donation.objects.filter(donor=request.user)
-    serializer = DonationSerializer(donations, many=True)
+def get_receiver_donations(request):
+    donations = ReceiverDonation.objects.all()
+    serializer = ReceiverDonationSerializer(donations, many=True)
     return Response(serializer.data)

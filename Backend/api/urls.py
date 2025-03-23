@@ -1,11 +1,9 @@
 from django.urls import path
-from .views import register, login, add_task, get_tasks, donate, get_donations
+from .views import shop_donate, get_shop_donations, admin_to_receiver, get_receiver_donations
 
 urlpatterns = [
-    path('register/', register),
-    path('login/', login),
-    path('task/', add_task),
-    path('tasks/', get_tasks),
-    path('donate/', donate),
-    path('donations/', get_donations),
+    path('shop/donate/', shop_donate),
+    path('shop/donations/', get_shop_donations),
+    path('admin/receiver/', admin_to_receiver),
+    path('admin/receivers/', get_receiver_donations),
 ]
