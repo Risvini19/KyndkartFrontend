@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput } from 'react-native';
 
 // Beautiful Logo Component
@@ -45,14 +45,15 @@ function WelcomeScreen({ onNext }: { onNext: () => void }) {
 type LoginScreenProps = {
   onLogin: (email: string) => void;
   onGoToRegister: () => void;
+  onForgotPassword: () => void;
 };
 
-function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProps) {
+function LoginScreen({ onLogin, onGoToRegister, onForgotPassword }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    if (email.trim() !== '') {
+    if (email.trim() !== '' && password.trim() !== '') {
       onLogin(email);
     }
   };
@@ -92,7 +93,7 @@ function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProps) {
             value={password}
             onChangeText={setPassword}
           />
-          <TouchableOpacity style={styles.forgotPassword}>
+          <TouchableOpacity style={styles.forgotPassword} onPress={onForgotPassword}>
             <Text style={styles.forgotPasswordText}>Forgot password?</Text>
           </TouchableOpacity>
         </View>
@@ -225,19 +226,90 @@ function RegisterScreen({ onRegister, onGoToLogin }: RegisterScreenProps) {
   );
 }
 
+// Forgot Password Screen Component
+type ForgotPasswordScreenProps = {
+  onSendOtp: (emailOrPhone: string) => void;
+  onGoBack: () => void;
+};
+
+function ForgotPasswordScreen({ onSendOtp, onGoBack }: ForgotPasswordScreenProps) {
+  const [emailOrPhone, setEmailOrPhone] = useState('');
+
+  const handleSendOtp = () => {
+    if (emailOrPhone.trim() !== '') {
+      onSendOtp(emailOrPhone);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.loginContainer}>
+        {/* Logo at Top Center */}
+        <View style={styles.loginLogoContainer}>
+          <AppLogo />
+        </View>
+
+        {/* Forgot Password Title */}
+        <Text style={styles.loginTitle}>Forgot Password?</Text>
+
+        {/* Email or Phone Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Enter Your Mobile Number or Email Address</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Email or Phone"
+            placeholderTextColor="#999"
+            value={emailOrPhone}
+            onChangeText={setEmailOrPhone}
+          />
+        </View>
+
+        {/* Send OTP Button */}
+        <TouchableOpacity style={styles.loginButton} onPress={handleSendOtp}>
+          <Text style={styles.loginButtonText}>Send OTP</Text>
+        </TouchableOpacity>
+
+        {/* Back Button */}
+        <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
+          <Text style={styles.backButtonText}>Back to Login</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
 // OTP Verification Screen Component
 type OtpVerificationScreenProps = {
   email: string;
   onVerify: () => void;
   onResend: () => void;
+  onGoBack: () => void;
 };
 
-function OtpVerificationScreen({ email, onVerify, onResend }: OtpVerificationScreenProps) {
+function OtpVerificationScreen({ email, onVerify, onResend, onGoBack }: OtpVerificationScreenProps) {
   const [otp, setOtp] = useState('');
+  const [timer, setTimer] = useState(20);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (timer > 0) {
+        setTimer(timer - 1);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timer]);
 
   const handleVerify = () => {
     if (otp.trim() !== '') {
       onVerify();
+    }
+  };
+
+  const handleResend = () => {
+    if (timer === 0) {
+      setTimer(20);
+      onResend();
     }
   };
 
@@ -270,13 +342,87 @@ function OtpVerificationScreen({ email, onVerify, onResend }: OtpVerificationScr
         </View>
 
         {/* Resend OTP Link */}
-        <TouchableOpacity style={styles.resendOtp} onPress={onResend}>
-          <Text style={styles.resendOtpText}>Didn’t receive a code? Resend.</Text>
+        <TouchableOpacity style={styles.resendOtp} onPress={handleResend} disabled={timer > 0}>
+          <Text style={styles.resendOtpText}>
+            {timer > 0 ? `Resend code in ${timer}sec` : "Didn’t receive a code? Resend."}
+          </Text>
         </TouchableOpacity>
 
         {/* Verify Button */}
         <TouchableOpacity style={styles.loginButton} onPress={handleVerify}>
           <Text style={styles.loginButtonText}>Verify</Text>
+        </TouchableOpacity>
+
+        {/* Back Button */}
+        <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
+          <Text style={styles.backButtonText}>Back to Login</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+// Reset Password Screen Component
+type ResetPasswordScreenProps = {
+  onResetPassword: (newPassword: string, confirmPassword: string) => void;
+  onGoBack: () => void;
+};
+
+function ResetPasswordScreen({ onResetPassword, onGoBack }: ResetPasswordScreenProps) {
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleResetPassword = () => {
+    if (newPassword.trim() !== '' && confirmPassword.trim() !== '' && newPassword === confirmPassword) {
+      onResetPassword(newPassword, confirmPassword);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.loginContainer}>
+        {/* Logo at Top Center */}
+        <View style={styles.loginLogoContainer}>
+          <AppLogo />
+        </View>
+
+        {/* Reset Password Title */}
+        <Text style={styles.loginTitle}>Reset Your Password</Text>
+
+        {/* New Password Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Enter New Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="New Password"
+            placeholderTextColor="#999"
+            secureTextEntry
+            value={newPassword}
+            onChangeText={setNewPassword}
+          />
+        </View>
+
+        {/* Confirm Password Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Enter Confirm Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            placeholderTextColor="#999"
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+        </View>
+
+        {/* Confirm Button */}
+        <TouchableOpacity style={styles.loginButton} onPress={handleResetPassword}>
+          <Text style={styles.loginButtonText}>Confirm</Text>
+        </TouchableOpacity>
+
+        {/* Back Button */}
+        <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
+          <Text style={styles.backButtonText}>Back to Login</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -441,7 +587,7 @@ function Account({ onGoBack }: { onGoBack: () => void }) {
 
 // Main App Component
 export default function KyndKartApp() {
-  const [currentScreen, setCurrentScreen] = useState('welcome'); // 'welcome', 'login', 'register', 'otp', 'home', 'settings', 'activity', 'account'
+  const [currentScreen, setCurrentScreen] = useState('welcome'); // 'welcome', 'login', 'register', 'otp', 'home', 'settings', 'activity', 'account', 'forgotPassword', 'resetPassword'
   const [userEmail, setUserEmail] = useState('');
 
   const renderScreen = () => {
@@ -453,9 +599,10 @@ export default function KyndKartApp() {
           <LoginScreen
             onLogin={(email) => {
               setUserEmail(email);
-              setCurrentScreen('otp');
+              setCurrentScreen('home'); // Navigate to home directly after login
             }}
             onGoToRegister={() => setCurrentScreen('register')}
+            onForgotPassword={() => setCurrentScreen('forgotPassword')}
           />
         );
       case 'register':
@@ -469,8 +616,29 @@ export default function KyndKartApp() {
         return (
           <OtpVerificationScreen
             email={userEmail}
-            onVerify={() => setCurrentScreen('home')}
+            onVerify={() => setCurrentScreen('resetPassword')}
             onResend={() => console.log('Resend OTP')}
+            onGoBack={() => setCurrentScreen('login')}
+          />
+        );
+      case 'forgotPassword':
+        return (
+          <ForgotPasswordScreen
+            onSendOtp={(emailOrPhone) => {
+              setUserEmail(emailOrPhone);
+              setCurrentScreen('otp');
+            }}
+            onGoBack={() => setCurrentScreen('login')}
+          />
+        );
+      case 'resetPassword':
+        return (
+          <ResetPasswordScreen
+            onResetPassword={(newPassword, confirmPassword) => {
+              console.log('Password reset successfully');
+              setCurrentScreen('login');
+            }}
+            onGoBack={() => setCurrentScreen('login')}
           />
         );
       case 'home':
