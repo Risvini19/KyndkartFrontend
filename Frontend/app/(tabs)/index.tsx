@@ -1,184 +1,51 @@
-import React, { useState, useRef } from 'react';
-import { 
-  StyleSheet, 
-  View, 
-  SafeAreaView, 
-  Text, 
-  TextInput, 
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  ViewStyle
-} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput } from 'react-native';
 
-export default function KyndKartApp() {
-  const [currentScreen, setCurrentScreen] = useState('login'); // 'login', 'register', 'otp', 'home', 'shopRegister', 'ngoRegister', 'profile'
-  const [email, setEmail] = useState('');
-  const [userName, setUserName] = useState('Huzrin Hussain');
-  const [userEmail, setUserEmail] = useState('huzrinhussain@gmail.com');
-  
-  // Screen navigation handlers
-  const handleLogin = () => setCurrentScreen('otp');
-  const handleVerify = () => setCurrentScreen('home');
-  const handleLogout = () => setCurrentScreen('login');
-  const handleGoToRegister = () => setCurrentScreen('register');
-  const handleGoToLogin = () => setCurrentScreen('login');
-  const handleGoToShopRegister = () => setCurrentScreen('shopRegister');
-  const handleGoToNGORegister = () => setCurrentScreen('ngoRegister');
-  const handleGoToProfile = () => setCurrentScreen('profile');
-  const handleGoToHome = () => setCurrentScreen('home');
-  
-  // Render the appropriate screen
-  if (currentScreen === 'home') {
-    return <HomeScreen 
-      onLogout={handleLogout} 
-      onShopRegister={handleGoToShopRegister}
-      onNGORegister={handleGoToNGORegister}
-      onProfilePress={handleGoToProfile}
-    />;
-  } else if (currentScreen === 'register') {
-    return <RegisterScreen onRegisterComplete={(email: string) => {
-      setEmail(email);
-      setCurrentScreen('otp');
-    }} onGoToLogin={handleGoToLogin} />;
-  } else if (currentScreen === 'otp') {
-    return <OTPVerificationScreen email={email} onVerify={handleVerify} onResend={() => {}} />;
-  } else if (currentScreen === 'shopRegister') {
-    return <ShopRegisterScreen onGoBack={() => setCurrentScreen('home')} onSubmit={() => setCurrentScreen('home')} />;
-  } else if (currentScreen === 'ngoRegister') {
-    return <NGORegisterScreen onGoBack={() => setCurrentScreen('home')} onSubmit={() => setCurrentScreen('home')} />;
-  } else if (currentScreen === 'profile') {
-    return <ProfileScreen 
-      userName={userName}
-      userEmail={userEmail}
-      onGoToHome={handleGoToHome}
-    />;
-  } else {
-    return <LoginScreen onLogin={(email) => {
-      setEmail(email);
-      handleLogin();
-    }} onGoToRegister={handleGoToRegister} />;
-  }
-}
-
-// Updated app logo component with a simple leaf design
+// Beautiful Logo Component
 function AppLogo() {
   return (
     <View style={styles.logoContainer}>
       <View style={styles.logoBackground}>
-        <View style={styles.leafContainer}>
-          <View style={[styles.leaf, styles.leftLeaf]} />
-          <View style={[styles.leaf, styles.rightLeaf]} />
-        </View>
+        <Text style={styles.logoText}>🍽️</Text>
       </View>
     </View>
   );
 }
 
-interface HomeScreenProps {
-  onLogout: () => void;
-  onShopRegister: () => void;
-  onNGORegister: () => void;
-  onProfilePress: () => void;
-}
-
-function HomeScreen({ onLogout, onShopRegister, onNGORegister, onProfilePress }: HomeScreenProps) {
+// Welcome Screen Component
+function WelcomeScreen({ onNext }: { onNext: () => void }) {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.homeContent}>
-        {/* Top curved background */}
-        <View style={styles.topCurve} />
-        
-        {/* Header Section */}
-        <View style={styles.headerSection}>
-          <Text style={styles.welcomeText}>Welcome to KyndKart</Text>
-        </View>
-        
-        {/* App Logo */}
+      {/* App Name */}
+      <View style={styles.headerSection}>
         <AppLogo />
-        
-        {/* App Name */}
-        <Text style={styles.appNameLarge}>KyndKart</Text>
-        
-        {/* Welcome Message */}
-        <Text style={styles.loginGreeting}>Thank you for logging in!</Text>
-        <Text style={styles.homeDescription}>
-          This is your home screen. Here you can access all your KyndKart features.
+        <Text style={styles.welcomeText}>KyndKart</Text>
+      </View>
+
+      {/* Welcome Message */}
+      <View style={styles.contentSection}>
+        <Text style={styles.descriptionText}>
+          "Join us in making a difference by connecting with NGOs and supporting meaningful causes. 
+          Whether you're donating essentials or lending a helping hand, every contribution counts.
+          Let’s get started—create your account today and be a part of the change!"
         </Text>
-        
-        {/* Feature Navigation */}
-        <View style={styles.featuresGrid}>
-          <View style={styles.featureRow}>
-            {/* Shop Button with cart icon */}
-            <TouchableOpacity style={styles.featureButton} onPress={onShopRegister}>
-              <View style={styles.featureIconContainer}>
-                <View style={styles.cartIconContainer}>
-                  <View style={styles.cartIcon} />
-                  <View style={styles.cartHandle} />
-                  <View style={styles.cartWheel1} />
-                  <View style={styles.cartWheel2} />
-                </View>
-              </View>
-              <Text style={styles.featureButtonText}>Shop</Text>
-            </TouchableOpacity>
-            
-            {/* Donations Button with heart icon */}
-            <TouchableOpacity style={styles.featureButton} onPress={onNGORegister}>
-              <View style={styles.featureIconContainer}>
-                <View style={styles.heartIconContainer}>
-                  <View style={styles.heartShape} />
-                </View>
-              </View>
-              <Text style={styles.featureButtonText}>Donations</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.featureRow}>
-            {/* Profile Button with person icon */}
-            <TouchableOpacity style={styles.featureButton} onPress={onProfilePress}>
-              <View style={styles.featureIconContainer}>
-                <View style={styles.personIconContainer}>
-                  <View style={styles.personHead} />
-                  <View style={styles.personBody} />
-                </View>
-              </View>
-              <Text style={styles.featureButtonText}>Profile</Text>
-            </TouchableOpacity>
-            
-            {/* Settings Button with gear icon */}
-            <TouchableOpacity style={styles.featureButton}>
-              <View style={styles.featureIconContainer}>
-                <View style={styles.gearIconContainer}>
-                  <View style={styles.gearOuter} />
-                  <View style={styles.gearInner} />
-                  <View style={styles.gearTooth1} />
-                  <View style={styles.gearTooth2} />
-                  <View style={styles.gearTooth3} />
-                  <View style={styles.gearTooth4} />
-                </View>
-              </View>
-              <Text style={styles.featureButtonText}>Settings</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        
-        {/* Logout Button */}
-        <TouchableOpacity style={styles.newLogoutButton} onPress={onLogout}>
-          <Text style={styles.newLogoutButtonText}>Logout</Text>
+      </View>
+
+      {/* Next Button at Bottom */}
+      <View style={styles.bottomSection}>
+        <TouchableOpacity style={styles.nextButton} onPress={onNext}>
+          <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>
-        
-        {/* Bottom curved background */}
-        <View style={styles.bottomCurve} />
       </View>
     </SafeAreaView>
   );
 }
 
-interface LoginScreenProps {
+// Login Screen Component
+type LoginScreenProps = {
   onLogin: (email: string) => void;
   onGoToRegister: () => void;
-}
+};
 
 function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProps) {
   const [email, setEmail] = useState('');
@@ -192,805 +59,332 @@ function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProps) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.content}
-      >
-        {/* Top curved background */}
-        <View style={styles.topCurve} />
-        
-        <View style={styles.loginContainer}>
-          {/* Updated Logo */}
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.loginContainer}>
+        {/* Logo at Top Center */}
+        <View style={styles.loginLogoContainer}>
           <AppLogo />
-          
-          {/* App Name */}
-          <Text style={styles.appName}>KyndKart</Text>
-          
-          {/* Login Title */}
-          <Text style={styles.loginTitle}>Login To Your Account</Text>
-          
-          {/* Email Field */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Your Email"
-              placeholderTextColor="#999"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
-            />
-          </View>
-          
-          {/* Password Field */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="#999"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
-            <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-            </TouchableOpacity>
-          </View>
-          
-          {/* Login Button */}
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Sign in</Text>
-          </TouchableOpacity>
-          
-          {/* Divider */}
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>Or</Text>
-            <View style={styles.dividerLine} />
-          </View>
-          
-          {/* Register Link */}
-          <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>Don't have an account yet? </Text>
-            <TouchableOpacity onPress={onGoToRegister}>
-              <Text style={styles.registerLink}>Register</Text>
-            </TouchableOpacity>
-          </View>
         </View>
-        
-        {/* Bottom curved background */}
-        <View style={styles.bottomCurve} />
-      </KeyboardAvoidingView>
+
+        {/* Login Title */}
+        <Text style={styles.loginTitle}>Login To Your Account</Text>
+
+        {/* Email Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Your Email"
+            placeholderTextColor="#999"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+
+        {/* Password Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#999"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Login Button */}
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          <Text style={styles.loginButtonText}>Sign in</Text>
+        </TouchableOpacity>
+
+        {/* Divider */}
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>Or</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        {/* Register Link */}
+        <View style={styles.registerContainer}>
+          <Text style={styles.registerText}>Don't have an account yet? </Text>
+          <TouchableOpacity onPress={onGoToRegister}>
+            <Text style={styles.registerLink}>Register</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-interface RegisterScreenProps {
-  onRegisterComplete: (email: string) => void;
-  onGoToLogin: () => void;
-}
+// HomeScreen Component
+type HomeScreenProps = {
+  onLogout: () => void;
+  onSettingsPress: () => void;
+  onActivityPress: () => void;
+  onAccountPress: () => void;
+};
 
-function RegisterScreen({ onRegisterComplete, onGoToLogin }: RegisterScreenProps) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
-  const handleRegister = () => {
-    if (email.trim() !== '') {
-      onRegisterComplete(email);
-    }
-  };
-
+function HomeScreen({ onLogout, onSettingsPress, onActivityPress, onAccountPress }: HomeScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.content}
-      >
-        {/* Top curved background */}
-        <View style={styles.topCurve} />
-        
-        <View style={styles.loginContainer}>
-          {/* Updated Logo */}
+      <ScrollView style={styles.scrollView}>
+        {/* Header Section */}
+        <View style={styles.headerSection}>
           <AppLogo />
-          
-          {/* App Name */}
-          <Text style={styles.appName}>KyndKart</Text>
-          
-          {/* Register Title */}
-          <Text style={styles.loginTitle}>Create New Account</Text>
-          
-          {/* Name Field */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Name</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Your Name"
-              placeholderTextColor="#999"
-              value={name}
-              onChangeText={setName}
-            />
-          </View>
-          
-          {/* Email Field */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Your Email"
-              placeholderTextColor="#999"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
-            />
-          </View>
-          
-          {/* Password Field */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="#999"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
-          </View>
-          
-          {/* Confirm Password Field */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Confirm Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              placeholderTextColor="#999"
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-            />
-          </View>
-          
-          {/* Register Button */}
-          <TouchableOpacity style={styles.loginButton} onPress={handleRegister}>
-            <Text style={styles.loginButtonText}>Next</Text>
-          </TouchableOpacity>
-          
-          {/* Divider */}
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>Or</Text>
-            <View style={styles.dividerLine} />
-          </View>
-          
-          {/* Login Link */}
-          <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>Already have an account? </Text>
-            <TouchableOpacity onPress={onGoToLogin}>
-              <Text style={styles.registerLink}>Log in</Text>
+          <Text style={styles.welcomeText}>Welcome to KyndKart</Text>
+        </View>
+
+        {/* Donors Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Donors</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Recent Donors</Text>
+            <TouchableOpacity style={styles.viewMoreButton}>
+              <Text style={styles.viewMoreButtonText}>View More {'>'}</Text>
             </TouchableOpacity>
           </View>
         </View>
-        
-        {/* Bottom curved background */}
-        <View style={styles.bottomCurve} />
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
-}
 
-interface OTPVerificationScreenProps {
-  email: string;
-  onVerify: () => void;
-  onResend: () => void;
-}
-
-function OTPVerificationScreen({ email, onVerify, onResend }: OTPVerificationScreenProps) {
-  const [otp, setOtp] = useState(['', '', '', '']);
-  const [activeInput, setActiveInput] = useState(-1);
-  const inputRefs = useRef<(TextInput | null)[]>([]);
-  
-  // Handle OTP input change
-  const handleOtpChange = (text: string, index: number) => {
-    const newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
-    
-    // Auto focus next input
-    if (text && index < 3) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-  
-  // Handle key press to enable backspace navigation
-  const handleKeyPress = (e: { nativeEvent: { key: string } }, index: number) => {
-    if (e.nativeEvent.key === 'Backspace' && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.content}
-      >
-        {/* Top curved background */}
-        <View style={styles.topCurve} />
-        
-        <View style={styles.otpContainer}>
-          {/* Updated Logo */}
-          <AppLogo />
-          
-          {/* OTP Title */}
-          <Text style={styles.otpTitle}>OTP Verification</Text>
-          
-          {/* OTP Instructions */}
-          <Text style={styles.otpInstructions}>
-            Enter 4 digit code sent to your{'\n'}
-            E-mail <Text style={styles.emailHighlight}>{email}</Text>
-          </Text>
-          
-          {/* OTP Input Fields */}
-          <View style={styles.otpInputContainer}>
-            {[0, 1, 2, 3].map((index) => (
-              <TextInput
-                key={index}
-                ref={(ref) => (inputRefs.current[index] = ref)}
-                style={[
-                  styles.otpInput,
-                  activeInput === index ? styles.otpInputActive : {}
-                ]}
-                value={otp[index]}
-                onChangeText={(text) => handleOtpChange(text, index)}
-                onKeyPress={(e) => handleKeyPress(e, index)}
-                keyboardType="number-pad"
-                maxLength={1}
-                onFocus={() => setActiveInput(index)}
-                onBlur={() => setActiveInput(-1)}
-              />
-            ))}
-          </View>
-          
-          {/* Resend Code */}
-          <View style={styles.resendContainer}>
-            <Text style={styles.resendText}>Didn't receive a code? </Text>
-            <TouchableOpacity onPress={onResend}>
-              <Text style={styles.resendLink}>Resend.</Text>
-            </TouchableOpacity>
-          </View>
-          
-          {/* Verify Button */}
-          <TouchableOpacity style={styles.verifyButton} onPress={onVerify}>
-            <Text style={styles.verifyButtonText}>Verify</Text>
-          </TouchableOpacity>
-        </View>
-        
-        {/* Bottom curved background */}
-        <View style={styles.bottomCurve} />
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
-}
-
-// Shop Register Screen
-interface ShopRegisterScreenProps {
-  onGoBack: () => void;
-  onSubmit: () => void;
-}
-
-function ShopRegisterScreen({ onGoBack, onSubmit }: ShopRegisterScreenProps) {
-  const [businessName, setBusinessName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [location, setLocation] = useState('');
-  const [businessType, setBusinessType] = useState('');
-  const [operatingHours, setOperatingHours] = useState('');
-  const [registrationNumber, setRegistrationNumber] = useState('');
-
-  // Function to handle location selection
-  const handleLocationSelect = () => {
-    // This would typically call a location picker API
-    // For demonstration, just set a sample location
-    setLocation('123 Main St, City Name');
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.content}
-      >
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.registerFormContainer}>
-            {/* Back Button */}
-            <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
-              <Text style={styles.backButtonText}>←</Text>
-            </TouchableOpacity>
-            
-            {/* Form Title */}
-            <Text style={styles.registerFormTitle}>Register</Text>
-            
-            {/* Business Name Field */}
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Business/Organization Name</Text>
-              <TextInput
-                style={styles.formInput}
-                placeholder="Your Business/Organization Name"
-                placeholderTextColor="#999"
-                value={businessName}
-                onChangeText={setBusinessName}
-              />
-            </View>
-            
-            {/* Phone Number Field */}
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Phone Number</Text>
-              <TextInput
-                style={styles.formInput}
-                placeholder="Your Phone Number"
-                placeholderTextColor="#999"
-                keyboardType="phone-pad"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-              />
-            </View>
-            
-            {/* Location Field */}
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Location</Text>
-              <TouchableOpacity 
-                style={styles.locationInputContainer}
-                onPress={handleLocationSelect}
-              >
-                <Text style={styles.locationIcon}>📍</Text>
-                <TextInput
-                  style={styles.locationInput}
-                  placeholder="Your Location"
-                  placeholderTextColor="#999"
-                  value={location}
-                  onChangeText={setLocation}
-                />
-              </TouchableOpacity>
-            </View>
-            
-            {/* Business Type Field */}
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Business/Organization Type</Text>
-              <TextInput
-                style={styles.formInput}
-                placeholder="Your Business/Organization Type"
-                placeholderTextColor="#999"
-                value={businessType}
-                onChangeText={setBusinessType}
-              />
-            </View>
-            
-            {/* Operating Hours Field */}
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Operating Hours</Text>
-              <TextInput
-                style={styles.formInput}
-                placeholder="Your Operating Hours"
-                placeholderTextColor="#999"
-                value={operatingHours}
-                onChangeText={setOperatingHours}
-              />
-            </View>
-            
-            {/* Registration Number Field */}
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Registration Number</Text>
-              <TextInput
-                style={styles.formInput}
-                placeholder="Your Registration Number"
-                placeholderTextColor="#999"
-                value={registrationNumber}
-                onChangeText={setRegistrationNumber}
-              />
-            </View>
-            
-            {/* Submit Button */}
-            <TouchableOpacity 
-              style={styles.greenSubmitButton} 
-              onPress={onSubmit}
-            >
-              <Text style={styles.submitButtonText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
-}
-
-// NGO Register Screen
-interface NGORegisterScreenProps {
-  onGoBack: () => void;
-  onSubmit: () => void;
-}
-
-function NGORegisterScreen({ onGoBack, onSubmit }: NGORegisterScreenProps) {
-  const [ngoName, setNGOName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [location, setLocation] = useState('');
-  const [ngoType, setNGOType] = useState('');
-  const [registrationNumber, setRegistrationNumber] = useState('');
-
-  // Function to handle location selection
-  const handleLocationSelect = () => {
-    // This would typically call a location picker API
-    // For demonstration, just set a sample location
-    setLocation('123 Main St, City Name');
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.content}
-      >
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.registerFormContainer}>
-            {/* Back Button */}
-            <TouchableOpacity style={styles.backButtonSmall} onPress={onGoBack}>
-              <Text style={styles.backButtonText}>←</Text>
-            </TouchableOpacity>
-            
-            {/* Form Title */}
-            <Text style={styles.registerFormTitle}>Register</Text>
-            
-            {/* NGO Name Field */}
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>NGO/Organization Name</Text>
-              <TextInput
-                style={styles.formInput}
-                placeholder="Your NGO/Organization Name"
-                placeholderTextColor="#999"
-                value={ngoName}
-                onChangeText={setNGOName}
-              />
-            </View>
-            
-            {/* Phone Number Field */}
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Phone Number</Text>
-              <TextInput
-                style={styles.formInput}
-                placeholder="Your Phone Number"
-                placeholderTextColor="#999"
-                keyboardType="phone-pad"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-              />
-            </View>
-            
-            {/* Location Field */}
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Location</Text>
-              <TouchableOpacity 
-                style={styles.locationInputContainer}
-                onPress={handleLocationSelect}
-              >
-                <Text style={styles.locationIcon}>📍</Text>
-                <TextInput
-                  style={styles.locationInput}
-                  placeholder="Your Location"
-                  placeholderTextColor="#999"
-                  value={location}
-                  onChangeText={setLocation}
-                />
-              </TouchableOpacity>
-            </View>
-            
-            {/* NGO Type Field */}
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>NGO/Organization Type</Text>
-              <TextInput
-                style={styles.formInput}
-                placeholder="Your NGO/Organization Type"
-                placeholderTextColor="#999"
-                value={ngoType}
-                onChangeText={setNGOType}
-              />
-            </View>
-            
-            {/* Registration Number Field */}
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Registration Number</Text>
-              <TextInput
-                style={styles.formInput}
-                placeholder="Your Registration Number"
-                placeholderTextColor="#999"
-                value={registrationNumber}
-                onChangeText={setRegistrationNumber}
-              />
-            </View>
-            
-            {/* Submit Button */}
-            <TouchableOpacity 
-              style={styles.greenSubmitButton} 
-              onPress={onSubmit}
-            >
-              <Text style={styles.submitButtonText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
-}
-
-// Profile Screen
-interface ProfileScreenProps {
-  userName: string;
-  userEmail: string;
-  onGoToHome: () => void;
-}
-
-function ProfileScreen({ userName, userEmail, onGoToHome }: ProfileScreenProps) {
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.profileContainer}>
-        {/* Profile Header */}
-        <View style={styles.profileHeader}>
-          <View style={styles.profileHeaderCurve} />
-          <Text style={styles.profileTitle}>Profile</Text>
-          
-          {/* User Profile Section */}
-          <View style={styles.userProfileCard}>
-            <View style={styles.userAvatarContainer}>
-              <View style={styles.userAvatar} />
-            </View>
-            <Text style={styles.userName}>{userName}</Text>
-            <Text style={styles.userEmail}>{userEmail}</Text>
-            
-            <TouchableOpacity style={styles.editProfileButton}>
-              <Text style={styles.editProfileIcon}>✏️</Text>
+        {/* Donations Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Donations</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Recent Donations</Text>
+            <TouchableOpacity style={styles.viewMoreButton}>
+              <Text style={styles.viewMoreButtonText}>View More {'>'}</Text>
             </TouchableOpacity>
           </View>
         </View>
-        
-        {/* Profile Sections */}
-        <ScrollView style={styles.profileSections}>
-          {/* Personal Activity Section */}
-          <Text style={styles.sectionTitle}>Personal Activity</Text>
-          
-          <TouchableOpacity style={styles.profileOption}>
-            <View style={styles.iconContainer}>
-              <View style={[styles.optionIcon, styles.historyIcon]} />
-            </View>
-            <View style={styles.optionTextContainer}>
-              <Text style={styles.optionTitle}>Donation History</Text>
-              <Text style={styles.optionDescription}>Track your contributions</Text>
-            </View>
-            <Text style={styles.arrowIcon}>›</Text>
-          </TouchableOpacity>
-          
-          {/* Account Section */}
-          <Text style={styles.sectionTitle}>Account</Text>
-          
-          <TouchableOpacity style={styles.profileOption}>
-            <View style={styles.iconContainer}>
-              <View style={[styles.optionIcon, styles.settingsIcon]} />
-            </View>
-            <View style={styles.optionTextContainer}>
-              <Text style={styles.optionTitle}>Settings</Text>
-              <Text style={styles.optionDescription}>Make changes to your account</Text>
-            </View>
-            <Text style={styles.arrowIcon}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.profileOption}>
-            <View style={styles.iconContainer}>
-              <View style={[styles.optionIcon, styles.addressIcon]} />
-            </View>
-            <View style={styles.optionTextContainer}>
-              <Text style={styles.optionTitle}>Change Address</Text>
-              <Text style={styles.optionDescription}>Modify your addresses</Text>
-            </View>
-            <Text style={styles.arrowIcon}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.profileOption}>
-            <View style={styles.iconContainer}>
-              <View style={[styles.optionIcon, styles.logoutIcon]} />
-            </View>
-            <View style={styles.optionTextContainer}>
-              <Text style={styles.optionTitle}>Log Out</Text>
-              <Text style={styles.optionDescription}>Manage your device security</Text>
-            </View>
-            <Text style={styles.arrowIcon}>›</Text>
-          </TouchableOpacity>
-          
-          {/* More Section */}
-          <Text style={styles.sectionTitle}>More</Text>
-          
-          <TouchableOpacity style={styles.profileOption}>
-            <View style={styles.iconContainer}>
-              <View style={[styles.optionIcon, styles.helpIcon]} />
-            </View>
-            <View style={styles.optionTextContainer}>
-              <Text style={styles.optionTitle}>Help</Text>
-              <Text style={styles.optionDescription}>Get assistance for any queries</Text>
-            </View>
-            <Text style={styles.arrowIcon}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.profileOption}>
-            <View style={styles.iconContainer}>
-              <View style={[styles.optionIcon, styles.aboutIcon]} />
-            </View>
-            <View style={styles.optionTextContainer}>
-              <Text style={styles.optionTitle}>About</Text>
-              <Text style={styles.optionDescription}>Find out about the app</Text>
-            </View>
-            <Text style={styles.arrowIcon}>›</Text>
-          </TouchableOpacity>
-        </ScrollView>
+      </ScrollView>
+
+      {/* Bottom Navigation Bar */}
+      <View style={styles.bottomNav}>
+        <TouchableOpacity style={styles.navButton} onPress={onSettingsPress}>
+          <Text style={styles.navButtonText}>Settings</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navButton} onPress={onActivityPress}>
+          <Text style={styles.navButtonText}>Activity</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navButton} onPress={onAccountPress}>
+          <Text style={styles.navButtonText}>Account</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
 
+// Settings Component
+function Settings({ onGoBack }: { onGoBack: () => void }) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.headerSection}>
+          <Text style={styles.settingsTitle}>Settings</Text>
+        </View>
+
+        {/* Settings Options */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>General</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Notifications</Text>
+            <Text style={styles.cardText}>Theme</Text>
+            <Text style={styles.cardText}>Language</Text>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Account</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Change Password</Text>
+            <Text style={styles.cardText}>Privacy Settings</Text>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
+        <Text style={styles.backButtonText}>Back to Home</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+}
+
+// Activity Component
+function Activity({ onGoBack }: { onGoBack: () => void }) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.headerSection}>
+          <Text style={styles.title}>Activity</Text>
+        </View>
+
+        {/* Activity Logs */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Recent Activity</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Donation made to NGO XYZ</Text>
+            <Text style={styles.cardText}>Donation received from ABC</Text>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
+        <Text style={styles.backButtonText}>Back to Home</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+}
+
+// Account Component
+function Account({ onGoBack }: { onGoBack: () => void }) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.headerSection}>
+          <Text style={styles.title}>Account</Text>
+        </View>
+
+        {/* Account Details */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Profile</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Name: John Doe</Text>
+            <Text style={styles.cardText}>Email: john.doe@example.com</Text>
+            <Text style={styles.cardText}>Phone: +1234567890</Text>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Security</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Change Password</Text>
+            <Text style={styles.cardText}>Two-Factor Authentication</Text>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
+        <Text style={styles.backButtonText}>Back to Home</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+}
+
+// Main App Component
+export default function KyndKartApp() {
+  const [currentScreen, setCurrentScreen] = useState('welcome'); // 'welcome', 'login', 'home', 'settings', 'activity', 'account'
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'welcome':
+        return <WelcomeScreen onNext={() => setCurrentScreen('login')} />;
+      case 'login':
+        return (
+          <LoginScreen
+            onLogin={() => setCurrentScreen('home')}
+            onGoToRegister={() => setCurrentScreen('register')}
+          />
+        );
+      case 'home':
+        return (
+          <HomeScreen
+            onLogout={() => setCurrentScreen('login')}
+            onSettingsPress={() => setCurrentScreen('settings')}
+            onActivityPress={() => setCurrentScreen('activity')}
+            onAccountPress={() => setCurrentScreen('account')}
+          />
+        );
+      case 'settings':
+        return <Settings onGoBack={() => setCurrentScreen('home')} />;
+      case 'activity':
+        return <Activity onGoBack={() => setCurrentScreen('home')} />;
+      case 'account':
+        return <Account onGoBack={() => setCurrentScreen('home')} />;
+      default:
+        return <WelcomeScreen onNext={() => setCurrentScreen('login')} />;
+    }
+  };
+
+  return <SafeAreaView style={styles.container}>{renderScreen()}</SafeAreaView>;
+}
+
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#E8F5F0',
   },
-  content: {
-    flex: 1,
-    position: 'relative',
-  },
   scrollView: {
     flex: 1,
   },
-  homeContent: {
+  loginContainer: {
     flex: 1,
-    position: 'relative',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  loginLogoContainer: {
     alignItems: 'center',
-    paddingTop: 30,
+    marginBottom: 0,
   },
-  topCurve: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '30%',
-    backgroundColor: '#FFFFFF',
-    borderBottomLeftRadius: 200,
-    borderBottomRightRadius: 200,
+  headerSection: {
+    alignItems: 'center',
+    marginBottom: -40,
   },
-  bottomCurve: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: '30%',
-    backgroundColor: '#E8F5F0',
-    borderTopLeftRadius: 200,
-    borderTopRightRadius: 200,
-    zIndex: -1,
+  welcomeText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#006E29',
+    marginTop: -50,
+  },
+  contentSection: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  descriptionText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    lineHeight: 34,
+  },
+  bottomSection: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  nextButton: {
+    backgroundColor: '#006E29',
+    borderRadius: 25,
+    padding: 15,
+    width: '100%',
+    alignItems: 'center',
+  },
+  nextButtonText: {
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
   },
   logoContainer: {
     width: 100,
     height: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: 60,
+    marginTop: 80,
   },
   logoBackground: {
-    width: 100,
+    width: 90,
     height: 100,
-    borderRadius: 50,
+    borderRadius: 30,
     backgroundColor: '#006E29',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  leafContainer: {
-    width: 60,
-    height: 30,
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  leaf: {
-    position: 'absolute',
-    width: 30,
-    height: 30,
-    backgroundColor: 'white',
-    borderRadius: 50,
-  },
-  leftLeaf: {
-    left: 0,
-    transform: [{ rotate: '-45deg' }],
-  },
-  rightLeaf: {
-    right: 0,
-    transform: [{ rotate: '45deg' }],
-  } as ViewStyle,
-  headerSection: {
-    marginTop: 20,
-    marginBottom: 10,
-    alignItems: 'center',
-  },
-  welcomeText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#006E29',
-    marginBottom: 20,
-  },
-  loginContainer: {
-    flex: 1,
-    paddingHorizontal: 30,
-    paddingTop: 80,
-    zIndex: 1,
-    alignItems: 'center',
-  },
-  otpContainer: {
-    flex: 1,
-    paddingHorizontal: 30,
-    paddingTop: 80,
-    zIndex: 1,
-    alignItems: 'center',
-  },
-  registerFormTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  registerFormContainer: {
-    flex: 1,
-    paddingHorizontal: 30,
-    paddingTop: 40,
-    paddingBottom: 40,
-    backgroundColor: '#E8F5F0',
-  },
-  appName: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#006E29',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  appNameLarge: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#006E29',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  loginGreeting: {
-    fontSize: 18,
-    color: '#333',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  homeDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 30,
-    textAlign: 'center',
-    paddingHorizontal: 20,
-  },
-  featuresGrid: {
-    width: '100%',
-    paddingHorizontal: 20,
-    marginBottom: 30,
-  },
-  featureRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  featureButton: {
-    width: '48%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -999,166 +393,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  featureIconContainer: {
-    width: 50,
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
-  cartIconContainer: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#006E29',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  cartIcon: {
-    width: 20,
-    height: 20,
-    backgroundColor: 'white',
-    borderRadius: 5,
-  },
-  cartHandle: {
-    width: 10,
-    height: 10,
-    backgroundColor: 'white',
-    borderRadius: 5,
-    position: 'absolute',
-    top: -5,
-    left: 15,
-  },
-  cartWheel1: {
-    width: 8,
-    height: 8,
-    backgroundColor: 'white',
-    borderRadius: 4,
-    position: 'absolute',
-    bottom: -5,
-    left: 5,
-  },
-  cartWheel2: {
-    width: 8,
-    height: 8,
-    backgroundColor: 'white',
-    borderRadius: 4,
-    position: 'absolute',
-    bottom: -5,
-    right: 5,
-  },
-  heartIconContainer: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#FF6B6B',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  heartShape: {
-    width: 20,
-    height: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    transform: [{ rotate: '45deg' }],
-  },
-  personIconContainer: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#4A90E2',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  personHead: {
-    width: 20,
-    height: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
-  },
-  personBody: {
-    width: 20,
-    height: 10,
-    backgroundColor: 'white',
-    borderRadius: 5,
-    position: 'absolute',
-    bottom: -5,
-  },
-  gearIconContainer: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#FFC107',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  gearOuter: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderWidth: 4,
-    borderColor: 'white',
-  },
-  gearInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: 'white',
-  },
-  gearTooth1: {
-    width: 4,
-    height: 15,
-    backgroundColor: 'white',
-    position: 'absolute',
-    top: -5,
-    left: 13,
-    transform: [{ rotate: '0deg' }],
-  },
-  gearTooth2: {
-    width: 4,
-    height: 15,
-    backgroundColor: 'white',
-    position: 'absolute',
-    top: 13,
-    left: -5,
-    transform: [{ rotate: '90deg' }],
-  },
-  gearTooth3: {
-    width: 4,
-    height: 15,
-    backgroundColor: 'white',
-    position: 'absolute',
-    top: 13,
-    right: -5,
-    transform: [{ rotate: '90deg' }],
-  },
-  gearTooth4: {
-    width: 4,
-    height: 15,
-    backgroundColor: 'white',
-    position: 'absolute',
-    bottom: -5,
-    left: 13,
-    transform: [{ rotate: '0deg' }],
-  },
-  featureButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  newLogoutButton: {
-    backgroundColor: '#006E29',
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  newLogoutButtonText: {
-    fontSize: 16,
+  logoText: {
+    fontSize: 56,
     fontWeight: 'bold',
     color: 'white',
   },
@@ -1166,7 +402,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 20,
+    marginBottom: 50,
     textAlign: 'center',
   },
   inputGroup: {
@@ -1240,287 +476,80 @@ const styles = StyleSheet.create({
     color: '#006E29',
     fontWeight: 'bold',
   },
-  otpTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  otpInstructions: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  emailHighlight: {
-    fontWeight: 'bold',
-    color: '#006E29',
-  },
-  otpInputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '80%',
-    marginBottom: 20,
-  },
-  otpInput: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#DDD',
-    textAlign: 'center',
-    fontSize: 18,
-    color: '#333',
-  },
-  otpInputActive: {
-    borderColor: '#006E29',
-  },
-  resendContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  resendText: {
-    fontSize: 14,
-    color: '#666',
-  },
-  resendLink: {
-    fontSize: 14,
-    color: '#006E29',
-    fontWeight: 'bold',
-  },
-  verifyButton: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#006E29',
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  verifyButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  formGroup: {
-    width: '100%',
-    marginBottom: 20,
-  },
-  formLabel: {
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 5,
-  },
-  formInput: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    color: '#333',
-    borderWidth: 1,
-    borderColor: '#DDD',
-  },
-  locationInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    height: 50,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    borderWidth: 1,
-    borderColor: '#DDD',
-  },
-  locationIcon: {
-    fontSize: 20,
-    marginRight: 10,
-  },
-  locationInput: {
-    flex: 1,
-    fontSize: 16,
-    color: '#333',
-  },
-  greenSubmitButton: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#006E29',
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
-  submitButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-    zIndex: 1,
-  },
-  backButtonSmall: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    zIndex: 1,
-  },
-  backButtonText: {
-    fontSize: 24,
-    color: '#006E29',
-  },
-  profileContainer: {
-    flex: 1,
-    backgroundColor: '#E8F5F0',
-  },
-  profileHeader: {
-    height: 200,
-    backgroundColor: '#FFFFFF',
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  profileHeaderCurve: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '100%',
-    backgroundColor: '#FFFFFF',
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-  },
-  profileTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#006E29',
-    marginTop: 150,
-  },
-  userProfileCard: {
-    width: '90%',
-    height: '90%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 5,
-    alignItems: 'center',
-    marginTop: 50,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  userAvatarContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    backgroundColor: '#E8F5F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  userAvatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 40,
-    backgroundColor: '#006E29',
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginLeft: 100,
-  },
-  userEmail: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 20,
-  },
-  editProfileButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-  },
-  editProfileIcon: {
-    fontSize: 20,
-    color: '#006E29',
-  },
-  profileSections: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
+  section: {
+    margin: 20,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10,
+    marginTop: 50,
+    marginBottom: 20,
   },
-  profileOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     padding: 15,
-    marginBottom: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#E8F5F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  optionIcon: {
-    width: 24,
-    height: 24,
-    backgroundColor: '#006E29',
-    borderRadius: 12,
-  },
-  optionTextContainer: {
-    flex: 1,
-    marginLeft: 15,
-  },
-  optionTitle: {
+  cardText: {
     fontSize: 16,
+    color: '#666',
+    marginBottom: 20,
+  },
+  viewMoreButton: {
+    alignSelf: 'flex-end',
+    marginTop: 10,
+  },
+  viewMoreButtonText: {
+    fontSize: 14,
+    color: '#006E29',
+    fontWeight: 'bold',
+  },
+  bottomNav: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#DDD',
+  },
+  navButton: {
+    padding: 10,
+  },
+  navButtonText: {
+    fontSize: 16,
+    color: '#006E29',
+    fontWeight: 'bold',
+  },
+  backButton: {
+    backgroundColor: '#006E29',
+    borderRadius: 25,
+    padding: 15,
+    alignItems: 'center',
+    margin: 20,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  settingsTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
   },
-  optionDescription: {
-    fontSize: 14,
-    color: '#666',
-  },
-  arrowIcon: {
+  title: {
     fontSize: 24,
-    color: '#006E29',
-  },
-  historyIcon: {
-    backgroundColor: '#FFD700', // Example color, adjust as needed
-  },
-  settingsIcon: {
-    backgroundColor: '#4A90E2', // Example color, adjust as needed
-  },
-  addressIcon: {
-    backgroundColor: '#FF6347', // Example color, adjust as needed
-  },
-  logoutIcon: {
-    backgroundColor: '#FF0000', // Example color, adjust as needed
-  },
-  helpIcon: {
-    backgroundColor: '#FFD700', // Example color, adjust as needed
-  },
-  aboutIcon: {
-    backgroundColor: '#8A2BE2', // Example color, adjust as needed
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
   },
 });
