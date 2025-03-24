@@ -459,11 +459,11 @@ function HomeScreen({ onLogout, onSettingsPress, onActivityPress, onAccountPress
           </View>
         </View>
 
-        {/* Donations Section */}
+        {/* Receivers Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Recivers</Text>
+          <Text style={styles.sectionTitle}>Receivers</Text>
           <View style={styles.card}>
-            <Text style={styles.cardText}>Recent Recivers</Text>
+            <Text style={styles.cardText}>Recent Receivers</Text>
             <TouchableOpacity style={styles.viewMoreButton}>
               <Text style={styles.viewMoreButtonText}>View More {'>'}</Text>
             </TouchableOpacity>
@@ -541,141 +541,199 @@ function Register({ onGoBack }: RegisterProps) {
         {/* Register Title */}
         <Text style={styles.loginTitle}>Register</Text>
 
-       {/* Donor Registration Form */}
-<View style={styles.section}>
-  <Text style={styles.sectionTitle}>Donor Registration</Text>
-  <View style={styles.card}>
-    {!showDonorForm ? (
-      <TouchableOpacity style={styles.loginButton} onPress={() => setShowDonorForm(true)}>
-        <Text style={styles.loginButtonText}>Register as Donor</Text>
-      </TouchableOpacity>
-    ) : (
-      <>
-        <TextInput
-          style={styles.input}
-          placeholder="NGO/Organization Name"
-          placeholderTextColor="#999"
-          value={receiverName}
-          onChangeText={setReceiverName}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number"
-          placeholderTextColor="#999"
-          keyboardType="phone-pad"
-          value={receiverPhoneNumber}
-          onChangeText={setReceiverPhone}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Location"
-          placeholderTextColor="#999"
-          value={receiverLocation}
-          onChangeText={setReceiverLocation}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="NGO/Organization Type"
-          placeholderTextColor="#999"
-          value={organizationType}
-          onChangeText={setOrganizationType}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Operating Hours"
-          placeholderTextColor="#999"
-          value={operatingHours}
-          onChangeText={setOperatingHours}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Registration Number"
-          placeholderTextColor="#999"
-          keyboardType="phone-pad"
-          value={registrationNumber}
-          onChangeText={setRegistrationNumber}
-        />
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={() => {
-            handleDonorRegister();
-            setShowDonorForm(false); // Close the form after submission
-          }}
-        >
-          <Text style={styles.loginButtonText}>Submit</Text>
-        </TouchableOpacity>
-      </>
-    )}
-  </View>
-</View>
+        {/* Donor Registration Form */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Donor Registration</Text>
+          <View style={styles.card}>
+            {!showDonorForm ? (
+              <TouchableOpacity style={styles.loginButton} onPress={() => setShowDonorForm(true)}>
+                <Text style={styles.loginButtonText}>Register as Donor</Text>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Business Name</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Business/Organization Name"
+                    placeholderTextColor="#999"
+                    value={donorName}
+                    onChangeText={setDonorName}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Email</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Email"
+                    placeholderTextColor="#999"
+                    keyboardType="email-address"
+                    value={donorEmail}
+                    onChangeText={setDonorEmail}
+                  />
+                  </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Phone Number</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Phone Number"
+                    placeholderTextColor="#999"
+                    keyboardType="phone-pad"
+                    value={receiverPhoneNumber}
+                    onChangeText={setReceiverPhone}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Location</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Location"
+                    placeholderTextColor="#999"
+                    value={receiverLocation}
+                    onChangeText={setReceiverLocation}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Organization Type</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Business/Organization Type"
+                    placeholderTextColor="#999"
+                    value={organizationType}
+                    onChangeText={setOrganizationType}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Operating Hours</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Operating Hours"
+                    placeholderTextColor="#999"
+                    value={operatingHours}
+                    onChangeText={setOperatingHours}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Registration Number</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Registration Number"
+                    placeholderTextColor="#999"
+                    keyboardType="phone-pad"
+                    value={registrationNumber}
+                    onChangeText={setRegistrationNumber}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={() => {
+                    handleDonorRegister();
+                    setShowDonorForm(false); // Close the form after submission
+                  }}
+                >
+                  <Text style={styles.loginButtonText}>Submit</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
 
         {/* Receiver Registration Form */}
-<View style={styles.section}>
-  <Text style={styles.sectionTitle}>Receiver Registration</Text>
-  <View style={styles.card}>
-    {!showReceiverForm ? (
-      <TouchableOpacity style={styles.loginButton} onPress={() => setShowReceiverForm(true)}>
-        <Text style={styles.loginButtonText}>Register as Receiver</Text>
-      </TouchableOpacity>
-    ) : (
-      <>
-        <TextInput
-          style={styles.input}
-          placeholder="NGO/Organization Name"
-          placeholderTextColor="#999"
-          value={receiverName}
-          onChangeText={setReceiverName}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number"
-          placeholderTextColor="#999"
-          keyboardType="phone-pad"
-          value={receiverPhoneNumber}
-          onChangeText={setReceiverPhone}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Location"
-          placeholderTextColor="#999"
-          value={receiverLocation}
-          onChangeText={setReceiverLocation}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="NGO/Organization Type"
-          placeholderTextColor="#999"
-          value={organizationType}
-          onChangeText={setOrganizationType}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Operating Hours"
-          placeholderTextColor="#999"
-          value={operatingHours}
-          onChangeText={setOperatingHours}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Registration Number"
-          placeholderTextColor="#999"
-          keyboardType="phone-pad"
-          value={registrationNumber}
-          onChangeText={setRegistrationNumber}
-        />
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={() => {
-            handleReceiverRegister();
-            setShowReceiverForm(false); // Close the form after submission
-          }}
-        >
-          <Text style={styles.loginButtonText}>Submit</Text>
-        </TouchableOpacity>
-      </>
-    )}
-  </View>
-</View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Receiver Registration</Text>
+          <View style={styles.card}>
+            {!showReceiverForm ? (
+              <TouchableOpacity style={styles.loginButton} onPress={() => setShowReceiverForm(true)}>
+                <Text style={styles.loginButtonText}>Register as Receiver</Text>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>NGO Name</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your NGO/Organization Name"
+                    placeholderTextColor="#999"
+                    value={receiverName}
+                    onChangeText={setReceiverName}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Email</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Email"
+                    placeholderTextColor="#999"
+                    keyboardType="email-address"
+                    value={receiverEmail}
+                    onChangeText={setReceiverEmail}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Phone Number</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Phone Number"
+                    placeholderTextColor="#999"
+                    keyboardType="phone-pad"
+                    value={receiverPhoneNumber}
+                    onChangeText={setReceiverPhone}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Location</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Location"
+                    placeholderTextColor="#999"
+                    value={receiverLocation}
+                    onChangeText={setReceiverLocation}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>NGO Type</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your NGO/Organization Type"
+                    placeholderTextColor="#999"
+                    value={organizationType}
+                    onChangeText={setOrganizationType}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Operating Hours</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Operating Hours"
+                    placeholderTextColor="#999"
+                    value={operatingHours}
+                    onChangeText={setOperatingHours}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Registration Number</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Registration Number"
+                    placeholderTextColor="#999"
+                    keyboardType="phone-pad"
+                    value={registrationNumber}
+                    onChangeText={setRegistrationNumber}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={() => {
+                    handleReceiverRegister();
+                    setShowReceiverForm(false); // Close the form after submission
+                  }}
+                >
+                  <Text style={styles.loginButtonText}>Submit</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
       </ScrollView>
 
       {/* Back Button */}
@@ -1029,13 +1087,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   section: {
-    margin: 30,
+    margin: 20,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
-    marginTop: -20,
     marginBottom: 10,
   },
   card: {
@@ -1051,7 +1108,7 @@ const styles = StyleSheet.create({
   cardText: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   viewMoreButton: {
     alignSelf: 'flex-end',
