@@ -121,6 +121,168 @@ function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProps) {
   );
 }
 
+// Registration Screen Component
+type RegisterScreenProps = {
+  onRegister: () => void;
+  onGoToLogin: () => void;
+};
+
+function RegisterScreen({ onRegister, onGoToLogin }: RegisterScreenProps) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleRegister = () => {
+    if (name.trim() !== '' && email.trim() !== '' && password.trim() !== '' && password === confirmPassword) {
+      onRegister();
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.loginContainer}>
+        {/* Logo at Top Center */}
+        <View style={styles.loginLogoContainer}>
+          <AppLogo />
+        </View>
+
+        {/* Register Title */}
+        <Text style={styles.loginTitle}>Create New Account</Text>
+
+        {/* Name Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Your Name"
+            placeholderTextColor="#999"
+            value={name}
+            onChangeText={setName}
+          />
+        </View>
+
+        {/* Email Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Your Email"
+            placeholderTextColor="#999"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+
+        {/* Password Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#999"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
+
+        {/* Confirm Password Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Confirm Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            placeholderTextColor="#999"
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+        </View>
+
+        {/* Register Button */}
+        <TouchableOpacity style={styles.loginButton} onPress={handleRegister}>
+          <Text style={styles.loginButtonText}>Register</Text>
+        </TouchableOpacity>
+
+        {/* Divider */}
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>Or</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        {/* Login Link */}
+        <View style={styles.registerContainer}>
+          <Text style={styles.registerText}>Already have an account? </Text>
+          <TouchableOpacity onPress={onGoToLogin}>
+            <Text style={styles.registerLink}>Log in</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+// OTP Verification Screen Component
+type OtpVerificationScreenProps = {
+  email: string;
+  onVerify: () => void;
+  onResend: () => void;
+};
+
+function OtpVerificationScreen({ email, onVerify, onResend }: OtpVerificationScreenProps) {
+  const [otp, setOtp] = useState('');
+
+  const handleVerify = () => {
+    if (otp.trim() !== '') {
+      onVerify();
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.loginContainer}>
+        {/* Logo at Top Center */}
+        <View style={styles.loginLogoContainer}>
+          <AppLogo />
+        </View>
+
+        {/* OTP Verification Title */}
+        <Text style={styles.loginTitle}>OTP Verification</Text>
+
+        {/* OTP Instructions */}
+        <Text style={styles.otpInstructions}>
+          Enter 4 digit code sent to your E-mail {email}
+        </Text>
+
+        {/* OTP Field */}
+        <View style={styles.inputGroup}>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter OTP"
+            placeholderTextColor="#999"
+            keyboardType="numeric"
+            value={otp}
+            onChangeText={setOtp}
+          />
+        </View>
+
+        {/* Resend OTP Link */}
+        <TouchableOpacity style={styles.resendOtp} onPress={onResend}>
+          <Text style={styles.resendOtpText}>Didn’t receive a code? Resend.</Text>
+        </TouchableOpacity>
+
+        {/* Verify Button */}
+        <TouchableOpacity style={styles.loginButton} onPress={handleVerify}>
+          <Text style={styles.loginButtonText}>Verify</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
 // HomeScreen Component
 type HomeScreenProps = {
   onLogout: () => void;
@@ -279,7 +441,8 @@ function Account({ onGoBack }: { onGoBack: () => void }) {
 
 // Main App Component
 export default function KyndKartApp() {
-  const [currentScreen, setCurrentScreen] = useState('welcome'); // 'welcome', 'login', 'home', 'settings', 'activity', 'account'
+  const [currentScreen, setCurrentScreen] = useState('welcome'); // 'welcome', 'login', 'register', 'otp', 'home', 'settings', 'activity', 'account'
+  const [userEmail, setUserEmail] = useState('');
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -288,8 +451,26 @@ export default function KyndKartApp() {
       case 'login':
         return (
           <LoginScreen
-            onLogin={() => setCurrentScreen('home')}
+            onLogin={(email) => {
+              setUserEmail(email);
+              setCurrentScreen('otp');
+            }}
             onGoToRegister={() => setCurrentScreen('register')}
+          />
+        );
+      case 'register':
+        return (
+          <RegisterScreen
+            onRegister={() => setCurrentScreen('home')}
+            onGoToLogin={() => setCurrentScreen('login')}
+          />
+        );
+      case 'otp':
+        return (
+          <OtpVerificationScreen
+            email={userEmail}
+            onVerify={() => setCurrentScreen('home')}
+            onResend={() => console.log('Resend OTP')}
           />
         );
       case 'home':
@@ -551,5 +732,20 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 20,
     textAlign: 'center',
+  },
+  otpInstructions: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  resendOtp: {
+    alignSelf: 'center',
+    marginTop: 10,
+  },
+  resendOtpText: {
+    fontSize: 14,
+    color: '#006E29',
+    fontWeight: 'bold',
   },
 });
