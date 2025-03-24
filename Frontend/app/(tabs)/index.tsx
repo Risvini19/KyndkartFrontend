@@ -435,10 +435,12 @@ type HomeScreenProps = {
   onSettingsPress: () => void;
   onActivityPress: () => void;
   onAccountPress: () => void;
-  onRegisterPress: () => void; // New prop for Register navigation
+  onRegisterPress: () => void;
+  donorDetailsList: any[]; // Changed to accept a list of donor details
+  onViewMorePress: () => void;
 };
 
-function HomeScreen({ onLogout, onSettingsPress, onActivityPress, onAccountPress, onRegisterPress }: HomeScreenProps) {
+function HomeScreen({ onLogout, onSettingsPress, onActivityPress, onAccountPress, onRegisterPress, donorDetailsList, onViewMorePress }: HomeScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -453,7 +455,7 @@ function HomeScreen({ onLogout, onSettingsPress, onActivityPress, onAccountPress
           <Text style={styles.sectionTitle}>Donors</Text>
           <View style={styles.card}>
             <Text style={styles.cardText}>Recent Donors</Text>
-            <TouchableOpacity style={styles.viewMoreButton}>
+            <TouchableOpacity style={styles.viewMoreButton} onPress={onViewMorePress}>
               <Text style={styles.viewMoreButtonText}>View More {'>'}</Text>
             </TouchableOpacity>
           </View>
@@ -493,9 +495,10 @@ function HomeScreen({ onLogout, onSettingsPress, onActivityPress, onAccountPress
 // Register Component
 type RegisterProps = {
   onGoBack: () => void;
+  onDonorRegister: (donorDetails: any) => void; // New prop to handle donor registration
 };
 
-function Register({ onGoBack }: RegisterProps) {
+function Register({ onGoBack, onDonorRegister }: RegisterProps) {
   const [donorName, setDonorName] = useState('');
   const [donorEmail, setDonorEmail] = useState('');
   const [receiverName, setReceiverName] = useState('');
@@ -510,7 +513,12 @@ function Register({ onGoBack }: RegisterProps) {
 
   const handleDonorRegister = () => {
     if (donorName.trim() !== '' && donorEmail.trim() !== '') {
-      console.log('Donor Registered:', donorName, donorEmail);
+      const donorDetails = {
+        shopName: donorName,
+        registrationNumber: registrationNumber,
+        openingHours: operatingHours,
+      };
+      onDonorRegister(donorDetails); // Pass donor details to parent component
       setShowDonorForm(false); // Close the form after submission
     }
   };
@@ -571,7 +579,7 @@ function Register({ onGoBack }: RegisterProps) {
                     value={donorEmail}
                     onChangeText={setDonorEmail}
                   />
-                  </View>
+                </View>
                 <View style={styles.inputGroup}>
                   <Text style={styles.inputLabel}>Phone Number</Text>
                   <TextInput
@@ -744,6 +752,36 @@ function Register({ onGoBack }: RegisterProps) {
   );
 }
 
+// ViewMore Component
+function ViewMore({ donorDetailsList, onGoBack }: { donorDetailsList: any[]; onGoBack: () => void }) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.headerSection}>
+          <Text style={styles.title}>View More</Text>
+        </View>
+
+        {/* Donor Details */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Donor Details</Text>
+          {donorDetailsList.map((donor, index) => (
+            <View key={index} style={styles.card}>
+              <Text style={styles.cardText}>Shop Name: {donor.shopName}</Text>
+              <Text style={styles.cardText}>Registration Number: {donor.registrationNumber}</Text>
+              <Text style={styles.cardText}>Opening Hours: {donor.openingHours}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+
+      {/* Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
+        <Text style={styles.backButtonText}>Back to Home</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+}
+
 // Settings Component
 function Settings({ onGoBack }: { onGoBack: () => void }) {
   return (
@@ -845,8 +883,18 @@ function Account({ onGoBack }: { onGoBack: () => void }) {
 
 // Main App Component
 export default function KyndKartApp() {
-  const [currentScreen, setCurrentScreen] = useState('welcome'); // 'welcome', 'login', 'register', 'otp', 'home', 'settings', 'activity', 'account', 'forgotPassword', 'resetPassword', 'registerPage'
+  const [currentScreen, setCurrentScreen] = useState('welcome'); // 'welcome', 'login', 'register', 'otp', 'home', 'settings', 'activity', 'account', 'forgotPassword', 'resetPassword', 'registerPage', 'viewMore'
   const [userEmail, setUserEmail] = useState('');
+  const [donorDetailsList, setDonorDetailsList] = useState<any[]>([]); // Changed to store a list of donor details
+
+  const handleDonorRegister = (details: any) => {
+    setDonorDetailsList([...donorDetailsList, details]); // Add new donor details to the list
+    setCurrentScreen('home');
+  };
+
+  const handleViewMore = () => {
+    setCurrentScreen('viewMore');
+  };
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -906,7 +954,9 @@ export default function KyndKartApp() {
             onSettingsPress={() => setCurrentScreen('settings')}
             onActivityPress={() => setCurrentScreen('activity')}
             onAccountPress={() => setCurrentScreen('account')}
-            onRegisterPress={() => setCurrentScreen('registerPage')} // New navigation
+            onRegisterPress={() => setCurrentScreen('registerPage')}
+            donorDetailsList={donorDetailsList} // Pass the list of donor details
+            onViewMorePress={handleViewMore}
           />
         );
       case 'settings':
@@ -916,7 +966,9 @@ export default function KyndKartApp() {
       case 'account':
         return <Account onGoBack={() => setCurrentScreen('home')} />;
       case 'registerPage':
-        return <Register onGoBack={() => setCurrentScreen('home')} />; // New Register Page
+        return <Register onGoBack={() => setCurrentScreen('home')} onDonorRegister={handleDonorRegister} />;
+      case 'viewMore':
+        return <ViewMore donorDetailsList={donorDetailsList} onGoBack={() => setCurrentScreen('home')} />;
       default:
         return <WelcomeScreen onNext={() => setCurrentScreen('login')} />;
     }
@@ -1087,13 +1139,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   section: {
-    margin: 20,
+    padding: 20,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
+    color: '#363',
+    marginBottom: 20,
   },
   card: {
     backgroundColor: '#FFFFFF',
@@ -1104,9 +1156,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    marginBottom: 20,
   },
   cardText: {
     fontSize: 16,
+    fontWeight: 'bold',
     color: '#666',
     marginBottom: 10,
   },
