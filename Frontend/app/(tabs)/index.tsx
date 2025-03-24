@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 // Beautiful Logo Component
 function AppLogo() {
@@ -531,6 +532,7 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
         shopName: donorName,
         registrationNumber: registrationNumber,
         openingHours: operatingHours,
+        location: receiverLocation, // Added location
       };
       onDonorRegister(donorDetails);
       setShowDonorForm(false);
@@ -776,7 +778,13 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
 }
 
 // ViewMoreDonors Component
-function ViewMoreDonors({ donorDetailsList, onGoBack, onViewDetails }: { donorDetailsList: any[]; onGoBack: () => void; onViewDetails: () => void }) {
+function ViewMoreDonors({ donorDetailsList, onGoBack, onViewDetails, addedItems, onAvailablePress }: { 
+  donorDetailsList: any[]; 
+  onGoBack: () => void; 
+  onViewDetails: () => void; 
+  addedItems: any[]; 
+  onAvailablePress: () => void; 
+}) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -795,6 +803,10 @@ function ViewMoreDonors({ donorDetailsList, onGoBack, onViewDetails }: { donorDe
               <Text style={styles.cardText}>Opening Hours: {donor.openingHours}</Text>
               <TouchableOpacity style={styles.addButton} onPress={onViewDetails}>
                 <FontAwesome name="plus" size={24} color="#006E29" />
+              </TouchableOpacity>
+              {/* Available Button */}
+              <TouchableOpacity style={styles.availableButton} onPress={onAvailablePress}>
+                <Text style={styles.availableButtonText}>Available</Text>
               </TouchableOpacity>
             </View>
           ))}
@@ -940,9 +952,17 @@ function Account({ onGoBack }: { onGoBack: () => void }) {
 }
 
 // FoodDonationScreen Component
-function FoodDonationScreen({ onGoBack }: { onGoBack: () => void }) {
+function FoodDonationScreen({ onGoBack, onDonate }: { onGoBack: () => void; onDonate: (foodDetails: any) => void }) {
   const [quantity, setQuantity] = useState(1);
   const [isVegetarian, setIsVegetarian] = useState(true);
+  const [foodItems, setFoodItems] = useState('');
+  const [foodDescription, setFoodDescription] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
+  const [pickupDate, setPickupDate] = useState('');
+  const [pickupTime, setPickupTime] = useState('');
+  const [pickupLocation, setPickupLocation] = useState('');
+  const [foodType, setFoodType] = useState('');
+  const [photos, setPhotos] = useState<any[]>([]);
 
   const decreaseQuantity = () => {
     if (quantity > 1) setQuantity(quantity - 1);
@@ -950,6 +970,49 @@ function FoodDonationScreen({ onGoBack }: { onGoBack: () => void }) {
 
   const increaseQuantity = () => {
     setQuantity(quantity + 1);
+  };
+
+  const handleDonate = () => {
+    const foodDetails = {
+      foodItems,
+      quantity,
+      foodDescription,
+      expiryDate,
+      pickupLocation,
+      pickupSchedule: `${pickupDate} ${pickupTime}`,
+      isVegetarian,
+      foodType,
+      photos,
+    };
+    onDonate(foodDetails);
+  };
+
+  const handleImagePicker = () => {
+    launchImageLibrary({ mediaType: 'photo' }, (response) => {
+      if (!response.didCancel && !response.errorCode) {
+      if (response.assets && response.assets.length > 0) {
+        setPhotos([...photos, response.assets[0].uri]);
+      }
+      }
+    });
+  };
+
+  const handlePickupDateChange = (text: string) => {
+    if (text.length === 4 && !text.includes('-')) {
+      setPickupDate(`${text}-`);
+    } else if (text.length === 7 && text.charAt(6) !== '-') {
+      setPickupDate(`${text}-`);
+    } else {
+      setPickupDate(text);
+    }
+  };
+
+  const handlePickupTimeChange = (text: string) => {
+    if (text.length === 2 && !text.includes(':')) {
+      setPickupTime(`${text}:`);
+    } else {
+      setPickupTime(text);
+    }
   };
 
   return (
@@ -969,6 +1032,8 @@ function FoodDonationScreen({ onGoBack }: { onGoBack: () => void }) {
             style={styles.input}
             placeholder="Location"
             placeholderTextColor="#999"
+            value={pickupLocation}
+            onChangeText={setPickupLocation}
           />
         </View>
 
@@ -978,6 +1043,8 @@ function FoodDonationScreen({ onGoBack }: { onGoBack: () => void }) {
             style={styles.input}
             placeholder="Rice, Daal & Pasta"
             placeholderTextColor="#999"
+            value={foodItems}
+            onChangeText={setFoodItems}
           />
         </View>
 
@@ -985,29 +1052,28 @@ function FoodDonationScreen({ onGoBack }: { onGoBack: () => void }) {
           <View style={styles.halfWidth}>
             <Text style={styles.subtitle}>Type of Food</Text>
             <View style={styles.dropdown}>
-              <Text>Cooked Meals</Text>
+              <Text>{foodType || 'Select Food Type'}</Text>
               <FontAwesome name="chevron-down" size={16} color="#198754" />
+            </View>
+            <View style={styles.foodTypeOptions}>
+              {['Fruits', 'Vegetables', 'Dairy Items', 'Canned Foods', 'Biscuits', 'Cakes', 'Packaged Foods'].map((type) => (
+                <TouchableOpacity key={type} style={styles.foodTypeOption} onPress={() => setFoodType(type)}>
+                  <Text>{type}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
 
           <View style={styles.halfWidth}>
             <Text style={styles.subtitle}>Quantity</Text>
             <View style={styles.quantityContainer}>
-              <TouchableOpacity 
-                style={styles.quantityButton} 
-                onPress={decreaseQuantity}
-              >
+              <TouchableOpacity style={styles.quantityButton} onPress={decreaseQuantity}>
                 <FontAwesome name="minus" size={16} color="#198754" />
               </TouchableOpacity>
-              
               <View style={styles.quantityDisplay}>
                 <Text>{quantity}</Text>
               </View>
-              
-              <TouchableOpacity 
-                style={styles.quantityButton}
-                onPress={increaseQuantity}
-              >
+              <TouchableOpacity style={styles.quantityButton} onPress={increaseQuantity}>
                 <FontAwesome name="plus" size={16} color="#198754" />
               </TouchableOpacity>
             </View>
@@ -1022,26 +1088,21 @@ function FoodDonationScreen({ onGoBack }: { onGoBack: () => void }) {
             placeholderTextColor="#999"
             multiline={true}
             numberOfLines={3}
+            value={foodDescription}
+            onChangeText={setFoodDescription}
           />
         </View>
 
         <View style={styles.formGroup}>
           <Text style={styles.subtitle}>Dietary Information</Text>
           <View style={styles.radioGroup}>
-            <TouchableOpacity 
-              style={styles.radioOption}
-              onPress={() => setIsVegetarian(true)}
-            >
+            <TouchableOpacity style={styles.radioOption} onPress={() => setIsVegetarian(true)}>
               <View style={[styles.radioButton, isVegetarian && styles.radioButtonSelected]}>
                 {isVegetarian && <FontAwesome name="check" size={12} color="#fff" />}
               </View>
               <Text>Vegetarian</Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={styles.radioOption}
-              onPress={() => setIsVegetarian(false)}
-            >
+            <TouchableOpacity style={styles.radioOption} onPress={() => setIsVegetarian(false)}>
               <View style={[styles.radioButton, !isVegetarian && styles.radioButtonSelected]}>
                 {!isVegetarian && <FontAwesome name="check" size={12} color="#fff" />}
               </View>
@@ -1052,49 +1113,101 @@ function FoodDonationScreen({ onGoBack }: { onGoBack: () => void }) {
 
         <View style={styles.formGroup}>
           <Text style={styles.subtitle}>Expiry Date (If applicable)</Text>
-          <TouchableOpacity style={styles.datePickerButton}>
-            <FontAwesome name="calendar" size={16} color="#999" />
-            <Text style={styles.datePickerText}>Choose Date</Text>
-          </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder="YYYY-MM-DD"
+            placeholderTextColor="#999"
+            value={expiryDate}
+            onChangeText={setExpiryDate}
+            keyboardType="numeric"
+            maxLength={10}
+          />
         </View>
 
         <View style={styles.formGroup}>
           <Text style={styles.subtitle}>Preferred Pickup Schedule</Text>
           <View style={styles.dateTimeContainer}>
-            <TouchableOpacity style={styles.datePickerButtonHalf}>
-              <FontAwesome name="calendar" size={16} color="#999" />
-              <Text style={styles.datePickerText}>Choose Date</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.timePickerButton}>
-              <FontAwesome name="clock-o" size={16} color="#999" />
-              <Text style={styles.datePickerText}>Time</Text>
-            </TouchableOpacity>
+            <TextInput
+              style={[styles.input, { flex: 1, marginRight: 8 }]}
+              placeholder="YYYY-MM-DD"
+              placeholderTextColor="#999"
+              value={pickupDate}
+              onChangeText={handlePickupDateChange}
+              keyboardType="numeric"
+              maxLength={10}
+            />
+            <TextInput
+              style={[styles.input, { flex: 1 }]}
+              placeholder="HH:MM"
+              placeholderTextColor="#999"
+              value={pickupTime}
+              onChangeText={handlePickupTimeChange}
+              keyboardType="numeric"
+              maxLength={5}
+            />
           </View>
         </View>
 
         <View style={styles.formGroup}>
           <Text style={styles.subtitle}>Photos</Text>
-          <TouchableOpacity style={styles.photoUpload}>
+          <TouchableOpacity style={styles.photoUpload} onPress={handleImagePicker}>
             <FontAwesome name="plus" size={24} color="#198754" />
           </TouchableOpacity>
+          <View style={styles.photosContainer}>
+            {photos.map((photo, index) => (
+              <Image key={index} source={{ uri: photo }} style={styles.photo} />
+            ))}
+          </View>
         </View>
 
         <View style={styles.checkboxContainer}>
-          <TouchableOpacity style={styles.checkbox}>
+          <TouchableOpacity style={styles.checkbox} onPress={() => {}}>
             <FontAwesome name="check-circle" size={24} color="#198754" />
           </TouchableOpacity>
           <Text style={styles.checkboxText}>
-            I assure that food quality and hygiene has maintained
+            I assure that food quality and hygiene has been maintained
           </Text>
         </View>
       </ScrollView>
 
       {/* Donate Button */}
-      <TouchableOpacity style={styles.donateButton} onPress={onGoBack}>
+      <TouchableOpacity style={styles.donateButton} onPress={handleDonate}>
         <Text style={styles.donateButtonText}>Donate</Text>
       </TouchableOpacity>
     </View>
+  );
+}
+
+// AvailableFoodItems Component
+function AvailableFoodItems({ onGoBack, addedItems }: { onGoBack: () => void; addedItems: any[] }) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.headerSection}>
+          <Text style={styles.title}>Available Food Items</Text>
+        </View>
+
+        {/* Added Items Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Added Items</Text>
+          {addedItems.map((item, index) => (
+            <View key={index} style={styles.card}>
+              <Text style={styles.cardText}>Food Item: {item.foodItems}</Text>
+              <Text style={styles.cardText}>Quantity: {item.quantity}</Text>
+              <Text style={styles.cardText}>Expiry Date: {item.expiryDate}</Text>
+              <Text style={styles.cardText}>Pickup Location: {item.pickupLocation}</Text>
+              <Text style={styles.cardText}>Pickup Schedule: {item.pickupSchedule}</Text>
+              <Text style={styles.cardText}>Dietary Information: {item.isVegetarian ? 'Vegetarian' : 'Non-Vegetarian'}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+
+      {/* Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
+        <Text style={styles.backButtonText}>Back to Home</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 }
 
@@ -1103,7 +1216,8 @@ export default function KyndKartApp() {
   const [currentScreen, setCurrentScreen] = useState('welcome');
   const [userEmail, setUserEmail] = useState('');
   const [donorDetailsList, setDonorDetailsList] = useState<any[]>([]);
-  const [receiverDetailsList, setReceiverDetailsList] = useState<any[]>([]); // Added receiver details list
+  const [receiverDetailsList, setReceiverDetailsList] = useState<any[]>([]);
+  const [addedItems, setAddedItems] = useState<any[]>([]);
 
   const handleDonorRegister = (details: any) => {
     setDonorDetailsList([...donorDetailsList, details]);
@@ -1125,6 +1239,15 @@ export default function KyndKartApp() {
 
   const handleViewDetails = () => {
     setCurrentScreen('foodDonation');
+  };
+
+  const handleAvailableFoodItems = () => {
+    setCurrentScreen('availableFoodItems');
+  };
+
+  const handleDonate = (foodDetails: any) => {
+    setAddedItems([...addedItems, foodDetails]);
+    setCurrentScreen('viewMoreDonors');
   };
 
   const renderScreen = () => {
@@ -1207,11 +1330,21 @@ export default function KyndKartApp() {
           />
         );
       case 'viewMoreDonors':
-        return <ViewMoreDonors donorDetailsList={donorDetailsList} onGoBack={() => setCurrentScreen('home')} onViewDetails={handleViewDetails} />;
+        return (
+          <ViewMoreDonors
+            donorDetailsList={donorDetailsList}
+            onGoBack={() => setCurrentScreen('home')}
+            onViewDetails={handleViewDetails}
+            addedItems={addedItems}
+            onAvailablePress={handleAvailableFoodItems}
+          />
+        );
       case 'viewMoreReceivers':
         return <ViewMoreReceivers receiverDetailsList={receiverDetailsList} onGoBack={() => setCurrentScreen('home')} />;
       case 'foodDonation':
-        return <FoodDonationScreen onGoBack={() => setCurrentScreen('home')} />;
+        return <FoodDonationScreen onGoBack={() => setCurrentScreen('home')} onDonate={handleDonate} />;
+      case 'availableFoodItems':
+        return <AvailableFoodItems onGoBack={() => setCurrentScreen('home')} addedItems={addedItems} />;
       default:
         return <WelcomeScreen onNext={() => setCurrentScreen('login')} />;
     }
@@ -1477,6 +1610,18 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginTop: 10,
   },
+  availableButton: {
+    backgroundColor: '#198754',
+    borderRadius: 8,
+    padding: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  availableButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1643,5 +1788,27 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
     fontWeight: 'bold',
+  },
+  foodTypeOptions: {
+    marginTop: 8,
+  },
+  foodTypeOption: {
+    padding: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  photosContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 8,
+  },
+  photo: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginRight: 8,
+    marginBottom: 8,
   },
 });
