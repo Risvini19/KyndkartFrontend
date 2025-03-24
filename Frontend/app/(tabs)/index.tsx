@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 
 // Beautiful Logo Component
 function AppLogo() {
@@ -775,7 +776,7 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
 }
 
 // ViewMoreDonors Component
-function ViewMoreDonors({ donorDetailsList, onGoBack }: { donorDetailsList: any[]; onGoBack: () => void }) {
+function ViewMoreDonors({ donorDetailsList, onGoBack, onViewDetails }: { donorDetailsList: any[]; onGoBack: () => void; onViewDetails: () => void }) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -792,6 +793,9 @@ function ViewMoreDonors({ donorDetailsList, onGoBack }: { donorDetailsList: any[
               <Text style={styles.cardText}>Registration Number: {donor.registrationNumber}</Text>
               <Text style={styles.cardText}>Location: {donor.location}</Text>
               <Text style={styles.cardText}>Opening Hours: {donor.openingHours}</Text>
+              <TouchableOpacity style={styles.addButton} onPress={onViewDetails}>
+                <FontAwesome name="plus" size={24} color="#006E29" />
+              </TouchableOpacity>
             </View>
           ))}
         </View>
@@ -935,6 +939,165 @@ function Account({ onGoBack }: { onGoBack: () => void }) {
   );
 }
 
+// FoodDonationScreen Component
+function FoodDonationScreen({ onGoBack }: { onGoBack: () => void }) {
+  const [quantity, setQuantity] = useState(1);
+  const [isVegetarian, setIsVegetarian] = useState(true);
+
+  const decreaseQuantity = () => {
+    if (quantity > 1) setQuantity(quantity - 1);
+  };
+
+  const increaseQuantity = () => {
+    setQuantity(quantity + 1);
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
+          <FontAwesome name="arrow-left" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Details</Text>
+        <View style={styles.spacer} />
+      </View>
+
+      <ScrollView style={styles.formContainer}>
+        <View style={styles.formGroup}>
+          <Text style={styles.subtitle}>Pickup Where?</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Location"
+            placeholderTextColor="#999"
+          />
+        </View>
+
+        <View style={styles.formGroup}>
+          <Text style={styles.subtitle}>Food Item(s)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Rice, Daal & Pasta"
+            placeholderTextColor="#999"
+          />
+        </View>
+
+        <View style={styles.rowContainer}>
+          <View style={styles.halfWidth}>
+            <Text style={styles.subtitle}>Type of Food</Text>
+            <View style={styles.dropdown}>
+              <Text>Cooked Meals</Text>
+              <FontAwesome name="chevron-down" size={16} color="#198754" />
+            </View>
+          </View>
+
+          <View style={styles.halfWidth}>
+            <Text style={styles.subtitle}>Quantity</Text>
+            <View style={styles.quantityContainer}>
+              <TouchableOpacity 
+                style={styles.quantityButton} 
+                onPress={decreaseQuantity}
+              >
+                <FontAwesome name="minus" size={16} color="#198754" />
+              </TouchableOpacity>
+              
+              <View style={styles.quantityDisplay}>
+                <Text>{quantity}</Text>
+              </View>
+              
+              <TouchableOpacity 
+                style={styles.quantityButton}
+                onPress={increaseQuantity}
+              >
+                <FontAwesome name="plus" size={16} color="#198754" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.formGroup}>
+          <Text style={styles.subtitle}>Food Description</Text>
+          <TextInput
+            style={styles.textArea}
+            placeholder="Enter the food details (eg. Fish Curry, Milk Packets - 1L)"
+            placeholderTextColor="#999"
+            multiline={true}
+            numberOfLines={3}
+          />
+        </View>
+
+        <View style={styles.formGroup}>
+          <Text style={styles.subtitle}>Dietary Information</Text>
+          <View style={styles.radioGroup}>
+            <TouchableOpacity 
+              style={styles.radioOption}
+              onPress={() => setIsVegetarian(true)}
+            >
+              <View style={[styles.radioButton, isVegetarian && styles.radioButtonSelected]}>
+                {isVegetarian && <FontAwesome name="check" size={12} color="#fff" />}
+              </View>
+              <Text>Vegetarian</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.radioOption}
+              onPress={() => setIsVegetarian(false)}
+            >
+              <View style={[styles.radioButton, !isVegetarian && styles.radioButtonSelected]}>
+                {!isVegetarian && <FontAwesome name="check" size={12} color="#fff" />}
+              </View>
+              <Text>Non-Vegetarian</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.formGroup}>
+          <Text style={styles.subtitle}>Expiry Date (If applicable)</Text>
+          <TouchableOpacity style={styles.datePickerButton}>
+            <FontAwesome name="calendar" size={16} color="#999" />
+            <Text style={styles.datePickerText}>Choose Date</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.formGroup}>
+          <Text style={styles.subtitle}>Preferred Pickup Schedule</Text>
+          <View style={styles.dateTimeContainer}>
+            <TouchableOpacity style={styles.datePickerButtonHalf}>
+              <FontAwesome name="calendar" size={16} color="#999" />
+              <Text style={styles.datePickerText}>Choose Date</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.timePickerButton}>
+              <FontAwesome name="clock-o" size={16} color="#999" />
+              <Text style={styles.datePickerText}>Time</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.formGroup}>
+          <Text style={styles.subtitle}>Photos</Text>
+          <TouchableOpacity style={styles.photoUpload}>
+            <FontAwesome name="plus" size={24} color="#198754" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.checkboxContainer}>
+          <TouchableOpacity style={styles.checkbox}>
+            <FontAwesome name="check-circle" size={24} color="#198754" />
+          </TouchableOpacity>
+          <Text style={styles.checkboxText}>
+            I assure that food quality and hygiene has maintained
+          </Text>
+        </View>
+      </ScrollView>
+
+      {/* Donate Button */}
+      <TouchableOpacity style={styles.donateButton} onPress={onGoBack}>
+        <Text style={styles.donateButtonText}>Donate</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
 // Main App Component
 export default function KyndKartApp() {
   const [currentScreen, setCurrentScreen] = useState('welcome');
@@ -958,6 +1121,10 @@ export default function KyndKartApp() {
 
   const handleViewMoreReceivers = () => {
     setCurrentScreen('viewMoreReceivers');
+  };
+
+  const handleViewDetails = () => {
+    setCurrentScreen('foodDonation');
   };
 
   const renderScreen = () => {
@@ -1040,9 +1207,11 @@ export default function KyndKartApp() {
           />
         );
       case 'viewMoreDonors':
-        return <ViewMoreDonors donorDetailsList={donorDetailsList} onGoBack={() => setCurrentScreen('home')} />;
+        return <ViewMoreDonors donorDetailsList={donorDetailsList} onGoBack={() => setCurrentScreen('home')} onViewDetails={handleViewDetails} />;
       case 'viewMoreReceivers':
         return <ViewMoreReceivers receiverDetailsList={receiverDetailsList} onGoBack={() => setCurrentScreen('home')} />;
+      case 'foodDonation':
+        return <FoodDonationScreen onGoBack={() => setCurrentScreen('home')} />;
       default:
         return <WelcomeScreen onNext={() => setCurrentScreen('login')} />;
     }
@@ -1302,6 +1471,177 @@ const styles = StyleSheet.create({
   resendOtpText: {
     fontSize: 14,
     color: '#006E29',
+    fontWeight: 'bold',
+  },
+  addButton: {
+    alignSelf: 'flex-end',
+    marginTop: 10,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  spacer: {
+    width: 40,
+  },
+  formContainer: {
+    flex: 1,
+    padding: 16,
+  },
+  formGroup: {
+    marginBottom: 16,
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  halfWidth: {
+    width: '48%',
+  },
+  dropdown: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  quantityButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#198754',
+  },
+  quantityDisplay: {
+    flex: 1,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textArea: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 8,
+    fontSize: 16,
+    height: 80,
+    textAlignVertical: 'top',
+  },
+  radioGroup: {
+    flexDirection: 'row',
+    marginTop: 8,
+  },
+  radioOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 24,
+  },
+  radioButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    marginRight: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioButtonSelected: {
+    backgroundColor: '#198754',
+    borderColor: '#198754',
+  },
+  datePickerButton: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  datePickerButtonHalf: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    marginRight: 8,
+  },
+  timePickerButton: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  datePickerText: {
+    marginLeft: 8,
+    color: '#999',
+  },
+  dateTimeContainer: {
+    flexDirection: 'row',
+    marginTop: 8,
+  },
+  photoUpload: {
+    width: 100,
+    height: 100,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: '#198754',
+    borderRadius: 8,
+    marginTop: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  checkbox: {
+    marginRight: 8,
+  },
+  checkboxText: {
+    flex: 1,
+  },
+  donateButton: {
+    backgroundColor: '#006E29',
+    borderRadius: 25,
+    padding: 15,
+    alignItems: 'center',
+    margin: 20,
+  },
+  donateButtonText: {
+    fontSize: 16,
+    color: 'white',
     fontWeight: 'bold',
   },
 });
