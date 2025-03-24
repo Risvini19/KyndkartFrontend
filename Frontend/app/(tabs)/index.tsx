@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput, Image, Platform, Switch, Appearance } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput, Image, Platform } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { User, Mail, Phone, MapPin, Camera, Bell, Shield, ChevronRight, LogOut, CheckSquare, Square } from 'lucide-react-native';
+import { User, Mail, Phone, MapPin, Camera, Bell, Shield, ChevronRight, LogOut } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
-
-// Theme Context
-const ThemeContext = React.createContext({
-  isDarkMode: false,
-  toggleDarkMode: () => {},
-});
 
 // Beautiful Logo Component
 function AppLogo() {
@@ -24,23 +18,24 @@ function AppLogo() {
 
 // Welcome Screen Component
 function WelcomeScreen({ onNext }: { onNext: () => void }) {
-  const { isDarkMode } = React.useContext(ThemeContext);
-
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
+      {/* App Name */}
       <View style={styles.headerSection}>
         <AppLogo />
-        <Text style={[styles.welcomeText, isDarkMode && styles.darkText]}>KyndKart</Text>
+        <Text style={styles.welcomeText}>KyndKart</Text>
       </View>
 
+      {/* Welcome Message */}
       <View style={styles.contentSection}>
-        <Text style={[styles.descriptionText, isDarkMode && styles.darkText]}>
+        <Text style={styles.descriptionText}>
           "Join us in making a difference by connecting with NGOs and supporting meaningful causes. 
           Whether you're donating essentials or lending a helping hand, every contribution counts.
           Let’s get started—create your account today and be a part of the change!"
         </Text>
       </View>
 
+      {/* Next Button at Bottom */}
       <View style={styles.bottomSection}>
         <TouchableOpacity style={styles.nextButton} onPress={onNext}>
           <Text style={styles.nextButtonText}>Next</Text>
@@ -60,7 +55,6 @@ type LoginScreenProps = {
 function LoginScreen({ onLogin, onGoToRegister, onForgotPassword }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { isDarkMode } = React.useContext(ThemeContext);
 
   const handleLogin = () => {
     if (email.trim() !== '' && password.trim() !== '') {
@@ -69,18 +63,21 @@ function LoginScreen({ onLogin, onGoToRegister, onForgotPassword }: LoginScreenP
   };
 
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.loginContainer}>
+        {/* Logo at Top Center */}
         <View style={styles.loginLogoContainer}>
           <AppLogo />
         </View>
 
-        <Text style={[styles.loginTitle, isDarkMode && styles.darkText]}>Login To Your Account</Text>
+        {/* Login Title */}
+        <Text style={styles.loginTitle}>Login To Your Account</Text>
 
+        {/* Email Field */}
         <View style={styles.inputGroup}>
-          <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Email</Text>
+          <Text style={styles.inputLabel}>Email</Text>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="Your Email"
             placeholderTextColor="#999"
             keyboardType="email-address"
@@ -89,10 +86,11 @@ function LoginScreen({ onLogin, onGoToRegister, onForgotPassword }: LoginScreenP
           />
         </View>
 
+        {/* Password Field */}
         <View style={styles.inputGroup}>
-          <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Password</Text>
+          <Text style={styles.inputLabel}>Password</Text>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="Password"
             placeholderTextColor="#999"
             secureTextEntry
@@ -104,18 +102,21 @@ function LoginScreen({ onLogin, onGoToRegister, onForgotPassword }: LoginScreenP
           </TouchableOpacity>
         </View>
 
+        {/* Login Button */}
         <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginButtonText}>Sign in</Text>
         </TouchableOpacity>
 
+        {/* Divider */}
         <View style={styles.divider}>
           <View style={styles.dividerLine} />
           <Text style={styles.dividerText}>Or</Text>
           <View style={styles.dividerLine} />
         </View>
 
+        {/* Register Link */}
         <View style={styles.registerContainer}>
-          <Text style={[styles.registerText, isDarkMode && styles.darkText]}>Don't have an account yet? </Text>
+          <Text style={styles.registerText}>Don't have an account yet? </Text>
           <TouchableOpacity onPress={onGoToRegister}>
             <Text style={styles.registerLink}>Register</Text>
           </TouchableOpacity>
@@ -136,7 +137,6 @@ function RegisterScreen({ onRegister, onGoToLogin }: RegisterScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const { isDarkMode } = React.useContext(ThemeContext);
 
   const handleRegister = () => {
     if (name.trim() !== '' && email.trim() !== '' && password.trim() !== '' && password === confirmPassword) {
@@ -145,18 +145,21 @@ function RegisterScreen({ onRegister, onGoToLogin }: RegisterScreenProps) {
   };
 
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.loginContainer}>
+        {/* Logo at Top Center */}
         <View style={styles.loginLogoContainer}>
           <AppLogo />
         </View>
 
-        <Text style={[styles.loginTitle, isDarkMode && styles.darkText]}>Create New Account</Text>
+        {/* Register Title */}
+        <Text style={styles.loginTitle}>Create New Account</Text>
 
+        {/* Name Field */}
         <View style={styles.inputGroup}>
-          <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Name</Text>
+          <Text style={styles.inputLabel}>Name</Text>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="Your Name"
             placeholderTextColor="#999"
             value={name}
@@ -164,10 +167,11 @@ function RegisterScreen({ onRegister, onGoToLogin }: RegisterScreenProps) {
           />
         </View>
 
+        {/* Email Field */}
         <View style={styles.inputGroup}>
-          <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Email</Text>
+          <Text style={styles.inputLabel}>Email</Text>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="Your Email"
             placeholderTextColor="#999"
             keyboardType="email-address"
@@ -176,10 +180,11 @@ function RegisterScreen({ onRegister, onGoToLogin }: RegisterScreenProps) {
           />
         </View>
 
+        {/* Password Field */}
         <View style={styles.inputGroup}>
-          <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Password</Text>
+          <Text style={styles.inputLabel}>Password</Text>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="Password"
             placeholderTextColor="#999"
             secureTextEntry
@@ -188,10 +193,11 @@ function RegisterScreen({ onRegister, onGoToLogin }: RegisterScreenProps) {
           />
         </View>
 
+        {/* Confirm Password Field */}
         <View style={styles.inputGroup}>
-          <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Confirm Password</Text>
+          <Text style={styles.inputLabel}>Confirm Password</Text>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="Confirm Password"
             placeholderTextColor="#999"
             secureTextEntry
@@ -200,18 +206,21 @@ function RegisterScreen({ onRegister, onGoToLogin }: RegisterScreenProps) {
           />
         </View>
 
+        {/* Register Button */}
         <TouchableOpacity style={styles.loginButton} onPress={handleRegister}>
           <Text style={styles.loginButtonText}>Register</Text>
         </TouchableOpacity>
 
+        {/* Divider */}
         <View style={styles.divider}>
           <View style={styles.dividerLine} />
           <Text style={styles.dividerText}>Or</Text>
           <View style={styles.dividerLine} />
         </View>
 
+        {/* Login Link */}
         <View style={styles.registerContainer}>
-          <Text style={[styles.registerText, isDarkMode && styles.darkText]}>Already have an account? </Text>
+          <Text style={styles.registerText}>Already have an account? </Text>
           <TouchableOpacity onPress={onGoToLogin}>
             <Text style={styles.registerLink}>Log in</Text>
           </TouchableOpacity>
@@ -229,7 +238,6 @@ type ForgotPasswordScreenProps = {
 
 function ForgotPasswordScreen({ onSendOtp, onGoBack }: ForgotPasswordScreenProps) {
   const [emailOrPhone, setEmailOrPhone] = useState('');
-  const { isDarkMode } = React.useContext(ThemeContext);
 
   const handleSendOtp = () => {
     if (emailOrPhone.trim() !== '') {
@@ -238,18 +246,21 @@ function ForgotPasswordScreen({ onSendOtp, onGoBack }: ForgotPasswordScreenProps
   };
 
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.loginContainer}>
+        {/* Logo at Top Center */}
         <View style={styles.loginLogoContainer}>
           <AppLogo />
         </View>
 
-        <Text style={[styles.loginTitle, isDarkMode && styles.darkText]}>Forgot Password?</Text>
+        {/* Forgot Password Title */}
+        <Text style={styles.loginTitle}>Forgot Password?</Text>
 
+        {/* Email or Phone Field */}
         <View style={styles.inputGroup}>
-          <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Enter Your Mobile Number or Email Address</Text>
+          <Text style={styles.inputLabel}>Enter Your Mobile Number or Email Address</Text>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="Email or Phone"
             placeholderTextColor="#999"
             value={emailOrPhone}
@@ -257,10 +268,12 @@ function ForgotPasswordScreen({ onSendOtp, onGoBack }: ForgotPasswordScreenProps
           />
         </View>
 
+        {/* Send OTP Button */}
         <TouchableOpacity style={styles.loginButton} onPress={handleSendOtp}>
           <Text style={styles.loginButtonText}>Send OTP</Text>
         </TouchableOpacity>
 
+        {/* Back Button */}
         <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
           <Text style={styles.backButtonText}>Back to Login</Text>
         </TouchableOpacity>
@@ -280,7 +293,6 @@ type OtpVerificationScreenProps = {
 function OtpVerificationScreen({ email, onVerify, onResend, onGoBack }: OtpVerificationScreenProps) {
   const [otp, setOtp] = useState('');
   const [timer, setTimer] = useState(20);
-  const { isDarkMode } = React.useContext(ThemeContext);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -306,21 +318,25 @@ function OtpVerificationScreen({ email, onVerify, onResend, onGoBack }: OtpVerif
   };
 
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.loginContainer}>
+        {/* Logo at Top Center */}
         <View style={styles.loginLogoContainer}>
           <AppLogo />
         </View>
 
-        <Text style={[styles.loginTitle, isDarkMode && styles.darkText]}>OTP Verification</Text>
+        {/* OTP Verification Title */}
+        <Text style={styles.loginTitle}>OTP Verification</Text>
 
-        <Text style={[styles.otpInstructions, isDarkMode && styles.darkText]}>
+        {/* OTP Instructions */}
+        <Text style={styles.otpInstructions}>
           Enter 4 digit code sent to your E-mail {email}
         </Text>
 
+        {/* OTP Field */}
         <View style={styles.inputGroup}>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="Enter OTP"
             placeholderTextColor="#999"
             keyboardType="numeric"
@@ -329,16 +345,19 @@ function OtpVerificationScreen({ email, onVerify, onResend, onGoBack }: OtpVerif
           />
         </View>
 
+        {/* Resend OTP Link */}
         <TouchableOpacity style={styles.resendOtp} onPress={handleResend} disabled={timer > 0}>
           <Text style={styles.resendOtpText}>
             {timer > 0 ? `Resend code in ${timer}sec` : "Didn’t receive a code? Resend."}
           </Text>
         </TouchableOpacity>
 
+        {/* Verify Button */}
         <TouchableOpacity style={styles.loginButton} onPress={handleVerify}>
           <Text style={styles.loginButtonText}>Verify</Text>
         </TouchableOpacity>
 
+        {/* Back Button */}
         <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
           <Text style={styles.backButtonText}>Back to Login</Text>
         </TouchableOpacity>
@@ -356,7 +375,6 @@ type ResetPasswordScreenProps = {
 function ResetPasswordScreen({ onResetPassword, onGoBack }: ResetPasswordScreenProps) {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const { isDarkMode } = React.useContext(ThemeContext);
 
   const handleResetPassword = () => {
     if (newPassword.trim() !== '' && confirmPassword.trim() !== '' && newPassword === confirmPassword) {
@@ -365,18 +383,21 @@ function ResetPasswordScreen({ onResetPassword, onGoBack }: ResetPasswordScreenP
   };
 
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.loginContainer}>
+        {/* Logo at Top Center */}
         <View style={styles.loginLogoContainer}>
           <AppLogo />
         </View>
 
-        <Text style={[styles.loginTitle, isDarkMode && styles.darkText]}>Reset Your Password</Text>
+        {/* Reset Password Title */}
+        <Text style={styles.loginTitle}>Reset Your Password</Text>
 
+        {/* New Password Field */}
         <View style={styles.inputGroup}>
-          <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Enter New Password</Text>
+          <Text style={styles.inputLabel}>Enter New Password</Text>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="New Password"
             placeholderTextColor="#999"
             secureTextEntry
@@ -385,10 +406,11 @@ function ResetPasswordScreen({ onResetPassword, onGoBack }: ResetPasswordScreenP
           />
         </View>
 
+        {/* Confirm Password Field */}
         <View style={styles.inputGroup}>
-          <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Enter Confirm Password</Text>
+          <Text style={styles.inputLabel}>Enter Confirm Password</Text>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="Confirm Password"
             placeholderTextColor="#999"
             secureTextEntry
@@ -397,10 +419,12 @@ function ResetPasswordScreen({ onResetPassword, onGoBack }: ResetPasswordScreenP
           />
         </View>
 
+        {/* Confirm Button */}
         <TouchableOpacity style={styles.loginButton} onPress={handleResetPassword}>
           <Text style={styles.loginButtonText}>Confirm</Text>
         </TouchableOpacity>
 
+        {/* Back Button */}
         <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
           <Text style={styles.backButtonText}>Back to Login</Text>
         </TouchableOpacity>
@@ -417,9 +441,9 @@ type HomeScreenProps = {
   onAccountPress: () => void;
   onRegisterPress: () => void;
   donorDetailsList: any[];
-  receiverDetailsList: any[];
+  receiverDetailsList: any[]; // Added receiver details list
   onViewMoreDonorsPress: () => void;
-  onViewMoreReceiversPress: () => void;
+  onViewMoreReceiversPress: () => void; // Added view more for receivers
 };
 
 function HomeScreen({
@@ -433,30 +457,31 @@ function HomeScreen({
   onViewMoreDonorsPress,
   onViewMoreReceiversPress,
 }: HomeScreenProps) {
-  const { isDarkMode } = React.useContext(ThemeContext);
-
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
+        {/* Header Section */}
         <View style={styles.headerSection}>
           <AppLogo />
-          <Text style={[styles.welcomeText, isDarkMode && styles.darkText]}>Welcome to KyndKart</Text>
+          <Text style={styles.welcomeText}>Welcome to KyndKart</Text>
         </View>
 
+        {/* Donors Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Donors</Text>
-          <View style={[styles.card, isDarkMode && styles.darkCard]}>
-            <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Recent Donors</Text>
+          <Text style={styles.sectionTitle}>Donors</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Recent Donors</Text>
             <TouchableOpacity style={styles.viewMoreButton} onPress={onViewMoreDonorsPress}>
               <Text style={styles.viewMoreButtonText}>View More {'>'}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
+        {/* Receivers Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Receivers</Text>
-          <View style={[styles.card, isDarkMode && styles.darkCard]}>
-            <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Recent Receivers</Text>
+          <Text style={styles.sectionTitle}>Receivers</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Recent Receivers</Text>
             <TouchableOpacity style={styles.viewMoreButton} onPress={onViewMoreReceiversPress}>
               <Text style={styles.viewMoreButtonText}>View More {'>'}</Text>
             </TouchableOpacity>
@@ -464,18 +489,19 @@ function HomeScreen({
         </View>
       </ScrollView>
 
-      <View style={[styles.bottomNav, isDarkMode && styles.darkBottomNav]}>
+      {/* Bottom Navigation Bar */}
+      <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navButton} onPress={onSettingsPress}>
-          <Text style={[styles.navButtonText, isDarkMode && styles.darkText]}>Settings</Text>
+          <Text style={styles.navButtonText}>Settings</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navButton} onPress={onActivityPress}>
-          <Text style={[styles.navButtonText, isDarkMode && styles.darkText]}>Activity</Text>
+          <Text style={styles.navButtonText}>Activity</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navButton} onPress={onAccountPress}>
-          <Text style={[styles.navButtonText, isDarkMode && styles.darkText]}>Account</Text>
+          <Text style={styles.navButtonText}>Account</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navButton} onPress={onRegisterPress}>
-          <Text style={[styles.navButtonText, isDarkMode && styles.darkText]}>Register</Text>
+          <Text style={styles.navButtonText}>Register</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -486,7 +512,7 @@ function HomeScreen({
 type RegisterProps = {
   onGoBack: () => void;
   onDonorRegister: (donorDetails: any) => void;
-  onReceiverRegister: (receiverDetails: any) => void;
+  onReceiverRegister: (receiverDetails: any) => void; // Added receiver registration handler
 };
 
 function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterProps) {
@@ -501,7 +527,6 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
   const [registrationNumber, setRegistrationNumber] = useState('');
   const [showDonorForm, setShowDonorForm] = useState(false);
   const [operatingHours, setOperatingHours] = useState('');
-  const { isDarkMode } = React.useContext(ThemeContext);
 
   const handleDonorRegister = () => {
     if (donorName.trim() !== '' && donorEmail.trim() !== '') {
@@ -509,7 +534,7 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
         shopName: donorName,
         registrationNumber: registrationNumber,
         openingHours: operatingHours,
-        location: receiverLocation,
+        location: receiverLocation, // Added location
       };
       onDonorRegister(donorDetails);
       setShowDonorForm(false);
@@ -541,17 +566,20 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
   };
 
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
+        {/* Logo at Top Center */}
         <View style={styles.loginLogoContainer}>
           <AppLogo />
         </View>
 
-        <Text style={[styles.loginTitle, isDarkMode && styles.darkText]}>Register</Text>
+        {/* Register Title */}
+        <Text style={styles.loginTitle}>Register</Text>
 
+        {/* Donor Registration Form */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Donor Registration</Text>
-          <View style={[styles.card, isDarkMode && styles.darkCard]}>
+          <Text style={styles.sectionTitle}>Donor Registration</Text>
+          <View style={styles.card}>
             {!showDonorForm ? (
               <TouchableOpacity style={styles.loginButton} onPress={() => setShowDonorForm(true)}>
                 <Text style={styles.loginButtonText}>Register as Donor</Text>
@@ -559,9 +587,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
             ) : (
               <>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Business Name</Text>
+                  <Text style={styles.inputLabel}>Business Name</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your Business/Organization Name"
                     placeholderTextColor="#999"
                     value={donorName}
@@ -569,9 +597,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
                   />
                 </View>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Email</Text>
+                  <Text style={styles.inputLabel}>Email</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your Email"
                     placeholderTextColor="#999"
                     keyboardType="email-address"
@@ -580,9 +608,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
                   />
                 </View>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Phone Number</Text>
+                  <Text style={styles.inputLabel}>Phone Number</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your Phone Number"
                     placeholderTextColor="#999"
                     keyboardType="phone-pad"
@@ -591,9 +619,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
                   />
                 </View>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Location</Text>
+                  <Text style={styles.inputLabel}>Location</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your Location"
                     placeholderTextColor="#999"
                     value={receiverLocation}
@@ -601,9 +629,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
                   />
                 </View>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Organization Type</Text>
+                  <Text style={styles.inputLabel}>Organization Type</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your Business/Organization Type"
                     placeholderTextColor="#999"
                     value={organizationType}
@@ -611,9 +639,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
                   />
                 </View>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Operating Hours</Text>
+                  <Text style={styles.inputLabel}>Operating Hours</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your Operating Hours"
                     placeholderTextColor="#999"
                     value={operatingHours}
@@ -621,9 +649,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
                   />
                 </View>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Registration Number</Text>
+                  <Text style={styles.inputLabel}>Registration Number</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your Registration Number"
                     placeholderTextColor="#999"
                     keyboardType="phone-pad"
@@ -645,9 +673,10 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
           </View>
         </View>
 
+        {/* Receiver Registration Form */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Receiver Registration</Text>
-          <View style={[styles.card, isDarkMode && styles.darkCard]}>
+          <Text style={styles.sectionTitle}>Receiver Registration</Text>
+          <View style={styles.card}>
             {!showReceiverForm ? (
               <TouchableOpacity style={styles.loginButton} onPress={() => setShowReceiverForm(true)}>
                 <Text style={styles.loginButtonText}>Register as Receiver</Text>
@@ -655,9 +684,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
             ) : (
               <>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>NGO Name</Text>
+                  <Text style={styles.inputLabel}>NGO Name</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your NGO/Organization Name"
                     placeholderTextColor="#999"
                     value={receiverName}
@@ -665,9 +694,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
                   />
                 </View>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Email</Text>
+                  <Text style={styles.inputLabel}>Email</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your Email"
                     placeholderTextColor="#999"
                     keyboardType="email-address"
@@ -676,9 +705,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
                   />
                 </View>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Phone Number</Text>
+                  <Text style={styles.inputLabel}>Phone Number</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your Phone Number"
                     placeholderTextColor="#999"
                     keyboardType="phone-pad"
@@ -687,9 +716,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
                   />
                 </View>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Location</Text>
+                  <Text style={styles.inputLabel}>Location</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your Location"
                     placeholderTextColor="#999"
                     value={receiverLocation}
@@ -697,9 +726,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
                   />
                 </View>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>NGO Type</Text>
+                  <Text style={styles.inputLabel}>NGO Type</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your NGO/Organization Type"
                     placeholderTextColor="#999"
                     value={organizationType}
@@ -707,9 +736,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
                   />
                 </View>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Operating Hours</Text>
+                  <Text style={styles.inputLabel}>Operating Hours</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your Operating Hours"
                     placeholderTextColor="#999"
                     value={operatingHours}
@@ -717,9 +746,9 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
                   />
                 </View>
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Registration Number</Text>
+                  <Text style={styles.inputLabel}>Registration Number</Text>
                   <TextInput
-                    style={[styles.input, isDarkMode && styles.darkInput]}
+                    style={styles.input}
                     placeholder="Your Registration Number"
                     placeholderTextColor="#999"
                     keyboardType="phone-pad"
@@ -742,6 +771,7 @@ function Register({ onGoBack, onDonorRegister, onReceiverRegister }: RegisterPro
         </View>
       </ScrollView>
 
+      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
         <Text style={styles.backButtonText}>Back to Home</Text>
       </TouchableOpacity>
@@ -757,26 +787,26 @@ function ViewMoreDonors({ donorDetailsList, onGoBack, onViewDetails, addedItems,
   addedItems: any[]; 
   onAvailablePress: () => void; 
 }) {
-  const { isDarkMode } = React.useContext(ThemeContext);
-
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.headerSection}>
-          <Text style={[styles.title, isDarkMode && styles.darkText]}>View More Donors</Text>
+          <Text style={styles.title}>View More Donors</Text>
         </View>
 
+        {/* Donor Details */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Donor Details</Text>
+          <Text style={styles.sectionTitle}>Donor Details</Text>
           {donorDetailsList.map((donor, index) => (
-            <View key={index} style={[styles.card, isDarkMode && styles.darkCard]}>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Shop Name: {donor.shopName}</Text>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Registration Number: {donor.registrationNumber}</Text>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Location: {donor.location}</Text>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Opening Hours: {donor.openingHours}</Text>
+            <View key={index} style={styles.card}>
+              <Text style={styles.cardText}>Shop Name: {donor.shopName}</Text>
+              <Text style={styles.cardText}>Registration Number: {donor.registrationNumber}</Text>
+              <Text style={styles.cardText}>Location: {donor.location}</Text>
+              <Text style={styles.cardText}>Opening Hours: {donor.openingHours}</Text>
               <TouchableOpacity style={styles.addButton} onPress={onViewDetails}>
                 <FontAwesome name="plus" size={24} color="#006E29" />
               </TouchableOpacity>
+              {/* Available Button */}
               <TouchableOpacity style={styles.availableButton} onPress={onAvailablePress}>
                 <Text style={styles.availableButtonText}>Available</Text>
               </TouchableOpacity>
@@ -785,6 +815,7 @@ function ViewMoreDonors({ donorDetailsList, onGoBack, onViewDetails, addedItems,
         </View>
       </ScrollView>
 
+      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
         <Text style={styles.backButtonText}>Back to Home</Text>
       </TouchableOpacity>
@@ -793,36 +824,29 @@ function ViewMoreDonors({ donorDetailsList, onGoBack, onViewDetails, addedItems,
 }
 
 // ViewMoreReceivers Component
-function ViewMoreReceivers({ receiverDetailsList, onGoBack, onViewDetails }: { 
-  receiverDetailsList: any[]; 
-  onGoBack: () => void; 
-  onViewDetails: (receiver: any) => void; 
-}) {
-  const { isDarkMode } = React.useContext(ThemeContext);
-
+function ViewMoreReceivers({ receiverDetailsList, onGoBack }: { receiverDetailsList: any[]; onGoBack: () => void }) {
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.headerSection}>
-          <Text style={[styles.title, isDarkMode && styles.darkText]}>View More Receivers</Text>
+          <Text style={styles.title}>View More Receivers</Text>
         </View>
 
+        {/* Receiver Details */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Receiver Details</Text>
+          <Text style={styles.sectionTitle}>Receiver Details</Text>
           {receiverDetailsList.map((receiver, index) => (
-            <View key={index} style={[styles.card, isDarkMode && styles.darkCard]}>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>NGO Name: {receiver.ngoName}</Text>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Location: {receiver.location}</Text>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Registration Number: {receiver.registrationNumber}</Text>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Operating Hours: {receiver.operatingHours}</Text>
-              <TouchableOpacity style={styles.addButton} onPress={() => onViewDetails(receiver)}>
-                <FontAwesome name="plus" size={24} color="#006E29" />
-              </TouchableOpacity>
+            <View key={index} style={styles.card}>
+              <Text style={styles.cardText}>NGO Name: {receiver.ngoName}</Text>
+              <Text style={styles.cardText}>Location: {receiver.location}</Text>
+              <Text style={styles.cardText}>Registration Number: {receiver.registrationNumber}</Text>
+              <Text style={styles.cardText}>Operating Hours: {receiver.operatingHours}</Text>
             </View>
           ))}
         </View>
       </ScrollView>
 
+      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
         <Text style={styles.backButtonText}>Back to Home</Text>
       </TouchableOpacity>
@@ -830,208 +854,35 @@ function ViewMoreReceivers({ receiverDetailsList, onGoBack, onViewDetails }: {
   );
 }
 
-// ReceiverDetails Component
-function ReceiverDetails({ receiver, onGoBack }: { receiver: any; onGoBack: () => void }) {
-  const [registrationNumber, setRegistrationNumber] = useState(receiver.registrationNumber);
-  const [foodItems, setFoodItems] = useState('');
-  const [quantity, setQuantity] = useState(1);
-  const [pickupTime, setPickupTime] = useState('');
-  const [pickupDate, setPickupDate] = useState('');
-  const { isDarkMode } = React.useContext(ThemeContext);
-
-  const handleSubmit = () => {
-    console.log({ registrationNumber, foodItems, quantity, pickupTime, pickupDate });
-    onGoBack();
-  };
-
-  const handlePickupDateChange = (text: string) => {
-    // Automatically add '-' after year and month
-    if (text.length === 4 && !text.includes('-')) {
-      setPickupDate(`${text}-`);
-    } else if (text.length === 7 && text.charAt(6) !== '-') {
-      setPickupDate(`${text}-`);
-    } else {
-      setPickupDate(text);
-    }
-  };
-
-  const handlePickupTimeChange = (text: string) => {
-    // Automatically add ':' after hours
-    if (text.length === 2 && !text.includes(':')) {
-      setPickupTime(`${text}:`);
-    } else {
-      setPickupTime(text);
-    }
-  };
-
-  return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.headerSection}>
-          <Text style={[styles.title, isDarkMode && styles.darkText]}>Receiver Details</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>NGO Name: {receiver.ngoName}</Text>
-          <View style={[styles.card, isDarkMode && styles.darkCard]}>
-            <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Registration Number</Text>
-              <TextInput
-                style={[styles.input, isDarkMode && styles.darkInput]}
-                placeholder="Registration Number"
-                placeholderTextColor="#999"
-                value={registrationNumber}
-                onChangeText={setRegistrationNumber}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Food Item(s)</Text>
-              <TextInput
-                style={[styles.input, isDarkMode && styles.darkInput]}
-                placeholder="Food Items"
-                placeholderTextColor="#999"
-                value={foodItems}
-                onChangeText={setFoodItems}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Quantity of Food Needed</Text>
-              <TextInput
-                style={[styles.input, isDarkMode && styles.darkInput]}
-                placeholder="Quantity"
-                placeholderTextColor="#999"
-                keyboardType="numeric"
-                value={quantity.toString()}
-                onChangeText={(text) => setQuantity(Number(text))}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Pickup Time</Text>
-              <TextInput
-                style={[styles.input, isDarkMode && styles.darkInput]}
-                placeholder="HH:MM"
-                placeholderTextColor="#999"
-                value={pickupTime}
-                onChangeText={handlePickupTimeChange}
-                keyboardType="numeric"
-                maxLength={5}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, isDarkMode && styles.darkText]}>Pickup Date</Text>
-              <TextInput
-                style={[styles.input, isDarkMode && styles.darkInput]}
-                placeholder="YYYY-MM-DD"
-                placeholderTextColor="#999"
-                value={pickupDate}
-                onChangeText={handlePickupDateChange}
-                keyboardType="numeric"
-                maxLength={10}
-              />
-            </View>
-
-            <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
-              <Text style={styles.loginButtonText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-
-      <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
-        <Text style={styles.backButtonText}>Back to Receivers</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
-  );
-}
-
 // Settings Component
 function Settings({ onGoBack }: { onGoBack: () => void }) {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const [darkModeEnabled, setDarkModeEnabled] = useState(true);
-  const [privacyPolicyAccepted, setPrivacyPolicyAccepted] = useState(false);
-  const [helpSupportEnabled, setHelpSupportEnabled] = useState(true);
-  const { isDarkMode, toggleDarkMode } = React.useContext(ThemeContext);
-
-  const toggleNotifications = () => setNotificationsEnabled(previousState => !previousState);
-
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.headerSection}>
-          <Text style={[styles.settingsTitle, isDarkMode && styles.darkText]}>Settings</Text>
+          <Text style={styles.settingsTitle}>Settings</Text>
         </View>
 
+        {/* Settings Options */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Preferences</Text>
-          <View style={[styles.card, isDarkMode && styles.darkCard]}>
-            <View style={styles.settingRow}>
-              <View style={styles.settingLabelContainer}>
-                <FontAwesome name="bell" size={20} color="#555" style={styles.settingIcon} />
-                <Text style={[styles.settingLabel, isDarkMode && styles.darkText]}>Notifications</Text>
-              </View>
-              <Switch
-                trackColor={{ false: "#d1d1d1", true: "#7cd3a8" }}
-                thumbColor={notificationsEnabled ? "#198754" : "#f4f3f4"}
-                onValueChange={toggleNotifications}
-                value={notificationsEnabled}
-              />
-            </View>
-
-            <View style={styles.settingRow}>
-              <View style={styles.settingLabelContainer}>
-                <FontAwesome name="moon-o" size={20} color="#555" style={styles.settingIcon} />
-                <Text style={[styles.settingLabel, isDarkMode && styles.darkText]}>Dark Mode</Text>
-              </View>
-              <Switch
-                trackColor={{ false: "#d1d1d1", true: "#7cd3a8" }}
-                thumbColor={darkModeEnabled ? "#198754" : "#f4f3f4"}
-                onValueChange={toggleDarkMode}
-                value={darkModeEnabled}
-              />
-            </View>
+          <Text style={styles.sectionTitle}>General</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Notifications</Text>
+            <Text style={styles.cardText}>Theme</Text>
+            <Text style={styles.cardText}>Language</Text>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Support</Text>
-          <View style={[styles.card, isDarkMode && styles.darkCard]}>
-            <TouchableOpacity 
-              style={styles.settingRow} 
-              onPress={() => setPrivacyPolicyAccepted(!privacyPolicyAccepted)}
-            >
-              <View style={styles.settingLabelContainer}>
-                <FontAwesome name="shield" size={20} color="#555" style={styles.settingIcon} />
-                <Text style={[styles.settingLabel, isDarkMode && styles.darkText]}>Privacy Policy</Text>
-              </View>
-              {privacyPolicyAccepted ? (
-                <CheckSquare size={20} color="#006E29" />
-              ) : (
-                <Square size={20} color="#666" />
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={styles.settingRow} 
-              onPress={() => setHelpSupportEnabled(!helpSupportEnabled)}
-            >
-              <View style={styles.settingLabelContainer}>
-                <FontAwesome name="question-circle" size={20} color="#555" style={styles.settingIcon} />
-                <Text style={[styles.settingLabel, isDarkMode && styles.darkText]}>Help & Support</Text>
-              </View>
-              {helpSupportEnabled ? (
-                <CheckSquare size={20} color="#006E29" />
-              ) : (
-                <Square size={20} color="#666" />
-              )}
-            </TouchableOpacity>
+          <Text style={styles.sectionTitle}>Account</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Change Password</Text>
+            <Text style={styles.cardText}>Privacy Settings</Text>
           </View>
         </View>
       </ScrollView>
 
+      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
         <Text style={styles.backButtonText}>Back to Home</Text>
       </TouchableOpacity>
@@ -1041,24 +892,24 @@ function Settings({ onGoBack }: { onGoBack: () => void }) {
 
 // Activity Component
 function Activity({ onGoBack }: { onGoBack: () => void }) {
-  const { isDarkMode } = React.useContext(ThemeContext);
-
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.headerSection}>
-          <Text style={[styles.title, isDarkMode && styles.darkText]}>Activity</Text>
+          <Text style={styles.title}>Activity</Text>
         </View>
 
+        {/* Activity Logs */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Recent Activity</Text>
-          <View style={[styles.card, isDarkMode && styles.darkCard]}>
-            <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Donation made to NGO XYZ</Text>
-            <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Donation received from ABC</Text>
+          <Text style={styles.sectionTitle}>Recent Activity</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Donation made to NGO XYZ</Text>
+            <Text style={styles.cardText}>Donation received from ABC</Text>
           </View>
         </View>
       </ScrollView>
 
+      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
         <Text style={styles.backButtonText}>Back to Home</Text>
       </TouchableOpacity>
@@ -1067,17 +918,17 @@ function Activity({ onGoBack }: { onGoBack: () => void }) {
 }
 
 // Account Component
-function Account({ onGoBack, onLogout }: { onGoBack: () => void; onLogout: () => void }) {
+function Account({ onGoBack }: { onGoBack: () => void }) {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState('John Doe');
   const [email, setEmail] = useState('john.doe@example.com');
   const [phone, setPhone] = useState('+1 (555) 123-4567');
   const [address, setAddress] = useState('123 Restaurant Ave, NY 10001');
   const [profileImage, setProfileImage] = useState('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop');
-  const { isDarkMode } = React.useContext(ThemeContext);
 
   const handleLogout = () => {
-    onLogout();
+    // Navigate back to the login page
+    onGoBack();
   };
 
   const handleEdit = () => {
@@ -1086,15 +937,18 @@ function Account({ onGoBack, onLogout }: { onGoBack: () => void; onLogout: () =>
 
   const handleSave = () => {
     setIsEditing(false);
+    // Save logic here
   };
 
   const handleCameraPress = async () => {
+    // Request permission to access the media library
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       alert('Sorry, we need camera roll permissions to make this work!');
       return;
     }
 
+    // Launch the image picker
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -1103,12 +957,14 @@ function Account({ onGoBack, onLogout }: { onGoBack: () => void; onLogout: () =>
     });
 
     if (!result.canceled) {
+      // Set the selected image as the profile picture
       setProfileImage(result.assets[0].uri);
     }
   };
 
   return (
-    <View style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <View style={styles.container}>
+      {/* Header Section */}
       <View style={styles.header}>
         <Image
           source={{
@@ -1128,64 +984,65 @@ function Account({ onGoBack, onLogout }: { onGoBack: () => void; onLogout: () =>
               <Camera size={20} color="#FFF" />
             </TouchableOpacity>
           </View>
-          <Text style={[styles.name, isDarkMode && styles.darkText]}>{name}</Text>
-          <Text style={[styles.role, isDarkMode && styles.darkText]}>{email}</Text>
+          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.role}>{email}</Text>
         </View>
       </View>
 
       <ScrollView style={styles.formContainer}>
-        <View style={[styles.card, isDarkMode && styles.darkCard]}>
+        {/* Personal Information Card */}
+        <View style={styles.card}>
           <View style={styles.cardHeader}>
             <User size={20} color="#007AFF" />
-            <Text style={[styles.cardTitle, isDarkMode && styles.darkText]}>Personal Information</Text>
+            <Text style={styles.cardTitle}>Personal Information</Text>
           </View>
           <View style={styles.cardContent}>
             <View style={styles.infoRow}>
-              <Text style={[styles.infoLabel, isDarkMode && styles.darkText]}>Name</Text>
+              <Text style={styles.infoLabel}>Name</Text>
               {isEditing ? (
                 <TextInput
-                  style={[styles.editInput, isDarkMode && styles.darkInput]}
+                  style={styles.editInput}
                   value={name}
                   onChangeText={setName}
                 />
               ) : (
-                <Text style={[styles.infoText, isDarkMode && styles.darkText]}>{name}</Text>
+                <Text style={styles.infoText}>{name}</Text>
               )}
             </View>
             <View style={styles.infoRow}>
               <Mail size={18} color="#666" />
               {isEditing ? (
                 <TextInput
-                  style={[styles.editInput, isDarkMode && styles.darkInput]}
+                  style={styles.editInput}
                   value={email}
                   onChangeText={setEmail}
                 />
               ) : (
-                <Text style={[styles.infoText, isDarkMode && styles.darkText]}>{email}</Text>
+                <Text style={styles.infoText}>{email}</Text>
               )}
             </View>
             <View style={styles.infoRow}>
               <Phone size={18} color="#666" />
               {isEditing ? (
                 <TextInput
-                  style={[styles.editInput, isDarkMode && styles.darkInput]}
+                  style={styles.editInput}
                   value={phone}
                   onChangeText={setPhone}
                 />
               ) : (
-                <Text style={[styles.infoText, isDarkMode && styles.darkText]}>{phone}</Text>
+                <Text style={styles.infoText}>{phone}</Text>
               )}
             </View>
             <View style={styles.infoRow}>
               <MapPin size={18} color="#666" />
               {isEditing ? (
                 <TextInput
-                  style={[styles.editInput, isDarkMode && styles.darkInput]}
+                  style={styles.editInput}
                   value={address}
                   onChangeText={setAddress}
                 />
               ) : (
-                <Text style={[styles.infoText, isDarkMode && styles.darkText]}>{address}</Text>
+                <Text style={styles.infoText}>{address}</Text>
               )}
             </View>
           </View>
@@ -1194,27 +1051,29 @@ function Account({ onGoBack, onLogout }: { onGoBack: () => void; onLogout: () =>
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.card, isDarkMode && styles.darkCard]}>
+        {/* Quick Actions Card */}
+        <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Bell size={20} color="#007AFF" />
-            <Text style={[styles.cardTitle, isDarkMode && styles.darkText]}>Quick Actions</Text>
+            <Text style={styles.cardTitle}>Quick Actions</Text>
           </View>
           <TouchableOpacity style={styles.actionItem}>
             <View style={styles.actionLeft}>
               <Shield size={20} color="#666" />
-              <Text style={[styles.actionText, isDarkMode && styles.darkText]}>Privacy Settings</Text>
+              <Text style={styles.actionText}>Privacy Settings</Text>
             </View>
             <ChevronRight size={20} color="#666" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionItem}>
             <View style={styles.actionLeft}>
               <Bell size={20} color="#666" />
-              <Text style={[styles.actionText, isDarkMode && styles.darkText]}>Notification Preferences</Text>
+              <Text style={styles.actionText}>Notification Preferences</Text>
             </View>
             <ChevronRight size={20} color="#666" />
           </TouchableOpacity>
         </View>
 
+        {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <LogOut size={20} color="#FF3B30" />
           <Text style={styles.logoutText}>Log Out</Text>
@@ -1236,7 +1095,6 @@ function FoodDonationScreen({ onGoBack, onDonate }: { onGoBack: () => void; onDo
   const [pickupLocation, setPickupLocation] = useState('');
   const [foodType, setFoodType] = useState('');
   const [photos, setPhotos] = useState<any[]>([]);
-  const { isDarkMode } = React.useContext(ThemeContext);
 
   const decreaseQuantity = () => {
     if (quantity > 1) setQuantity(quantity - 1);
@@ -1271,16 +1129,6 @@ function FoodDonationScreen({ onGoBack, onDonate }: { onGoBack: () => void; onDo
     });
   };
 
-  const handleExpiryDateChange = (text: string) => {
-    if (text.length === 4 && !text.includes('-')) {
-      setExpiryDate(`${text}-`);
-    } else if (text.length === 7 && text.charAt(6) !== '-') {
-      setExpiryDate(`${text}-`);
-    } else {
-      setExpiryDate(text);
-    }
-  };
-
   const handlePickupDateChange = (text: string) => {
     if (text.length === 4 && !text.includes('-')) {
       setPickupDate(`${text}-`);
@@ -1300,20 +1148,20 @@ function FoodDonationScreen({ onGoBack, onDonate }: { onGoBack: () => void; onDo
   };
 
   return (
-    <View style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
           <FontAwesome name="arrow-left" size={24} color="#000" />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, isDarkMode && styles.darkText]}>Food Donation Details</Text>
+        <Text style={styles.headerTitle}>Details</Text>
         <View style={styles.spacer} />
       </View>
 
       <ScrollView style={styles.formContainer}>
         <View style={styles.formGroup}>
-          <Text style={[styles.subtitle, isDarkMode && styles.darkText]}>Pickup Where?</Text>
+          <Text style={styles.subtitle}>Pickup Where?</Text>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="Location"
             placeholderTextColor="#999"
             value={pickupLocation}
@@ -1322,9 +1170,9 @@ function FoodDonationScreen({ onGoBack, onDonate }: { onGoBack: () => void; onDo
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={[styles.subtitle, isDarkMode && styles.darkText]}>Food Item(s)</Text>
+          <Text style={styles.subtitle}>Food Item(s)</Text>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="Rice, Daal & Pasta"
             placeholderTextColor="#999"
             value={foodItems}
@@ -1334,28 +1182,28 @@ function FoodDonationScreen({ onGoBack, onDonate }: { onGoBack: () => void; onDo
 
         <View style={styles.rowContainer}>
           <View style={styles.halfWidth}>
-            <Text style={[styles.subtitle, isDarkMode && styles.darkText]}>Type of Food</Text>
-            <View style={[styles.dropdown, isDarkMode && styles.darkInput]}>
-              <Text style={isDarkMode && styles.darkText}>{foodType || 'Select Food Type'}</Text>
+            <Text style={styles.subtitle}>Type of Food</Text>
+            <View style={styles.dropdown}>
+              <Text>{foodType || 'Select Food Type'}</Text>
               <FontAwesome name="chevron-down" size={16} color="#198754" />
             </View>
             <View style={styles.foodTypeOptions}>
               {['Fruits', 'Vegetables', 'Dairy Items', 'Canned Foods', 'Biscuits', 'Cakes', 'Packaged Foods'].map((type) => (
-                <TouchableOpacity key={type} style={[styles.foodTypeOption, isDarkMode && styles.darkInput]} onPress={() => setFoodType(type)}>
-                  <Text style={isDarkMode && styles.darkText}>{type}</Text>
+                <TouchableOpacity key={type} style={styles.foodTypeOption} onPress={() => setFoodType(type)}>
+                  <Text>{type}</Text>
                 </TouchableOpacity>
               ))}
             </View>
           </View>
 
           <View style={styles.halfWidth}>
-            <Text style={[styles.subtitle, isDarkMode && styles.darkText]}>Quantity</Text>
+            <Text style={styles.subtitle}>Quantity</Text>
             <View style={styles.quantityContainer}>
               <TouchableOpacity style={styles.quantityButton} onPress={decreaseQuantity}>
                 <FontAwesome name="minus" size={16} color="#198754" />
               </TouchableOpacity>
               <View style={styles.quantityDisplay}>
-                <Text style={isDarkMode && styles.darkText}>{quantity}</Text>
+                <Text>{quantity}</Text>
               </View>
               <TouchableOpacity style={styles.quantityButton} onPress={increaseQuantity}>
                 <FontAwesome name="plus" size={16} color="#198754" />
@@ -1365,9 +1213,9 @@ function FoodDonationScreen({ onGoBack, onDonate }: { onGoBack: () => void; onDo
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={[styles.subtitle, isDarkMode && styles.darkText]}>Food Description</Text>
+          <Text style={styles.subtitle}>Food Description</Text>
           <TextInput
-            style={[styles.textArea, isDarkMode && styles.darkInput]}
+            style={styles.textArea}
             placeholder="Enter the food details (eg. Fish Curry, Milk Packets - 1L)"
             placeholderTextColor="#999"
             multiline={true}
@@ -1378,41 +1226,41 @@ function FoodDonationScreen({ onGoBack, onDonate }: { onGoBack: () => void; onDo
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={[styles.subtitle, isDarkMode && styles.darkText]}>Dietary Information</Text>
+          <Text style={styles.subtitle}>Dietary Information</Text>
           <View style={styles.radioGroup}>
             <TouchableOpacity style={styles.radioOption} onPress={() => setIsVegetarian(true)}>
               <View style={[styles.radioButton, isVegetarian && styles.radioButtonSelected]}>
                 {isVegetarian && <FontAwesome name="check" size={12} color="#fff" />}
               </View>
-              <Text style={isDarkMode && styles.darkText}>Vegetarian</Text>
+              <Text>Vegetarian</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.radioOption} onPress={() => setIsVegetarian(false)}>
               <View style={[styles.radioButton, !isVegetarian && styles.radioButtonSelected]}>
                 {!isVegetarian && <FontAwesome name="check" size={12} color="#fff" />}
               </View>
-              <Text style={isDarkMode && styles.darkText}>Non-Vegetarian</Text>
+              <Text>Non-Vegetarian</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={[styles.subtitle, isDarkMode && styles.darkText]}>Expiry Date (If applicable)</Text>
+          <Text style={styles.subtitle}>Expiry Date (If applicable)</Text>
           <TextInput
-            style={[styles.input, isDarkMode && styles.darkInput]}
+            style={styles.input}
             placeholder="YYYY-MM-DD"
             placeholderTextColor="#999"
             value={expiryDate}
-            onChangeText={handleExpiryDateChange}
+            onChangeText={setExpiryDate}
             keyboardType="numeric"
             maxLength={10}
           />
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={[styles.subtitle, isDarkMode && styles.darkText]}>Preferred Pickup Schedule</Text>
+          <Text style={styles.subtitle}>Preferred Pickup Schedule</Text>
           <View style={styles.dateTimeContainer}>
             <TextInput
-              style={[styles.input, { flex: 1, marginRight: 8 }, isDarkMode && styles.darkInput]}
+              style={[styles.input, { flex: 1, marginRight: 8 }]}
               placeholder="YYYY-MM-DD"
               placeholderTextColor="#999"
               value={pickupDate}
@@ -1421,7 +1269,7 @@ function FoodDonationScreen({ onGoBack, onDonate }: { onGoBack: () => void; onDo
               maxLength={10}
             />
             <TextInput
-              style={[styles.input, { flex: 1 }, isDarkMode && styles.darkInput]}
+              style={[styles.input, { flex: 1 }]}
               placeholder="HH:MM"
               placeholderTextColor="#999"
               value={pickupTime}
@@ -1433,7 +1281,7 @@ function FoodDonationScreen({ onGoBack, onDonate }: { onGoBack: () => void; onDo
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={[styles.subtitle, isDarkMode && styles.darkText]}>Photos</Text>
+          <Text style={styles.subtitle}>Photos</Text>
           <TouchableOpacity style={styles.photoUpload} onPress={handleImagePicker}>
             <FontAwesome name="plus" size={24} color="#198754" />
           </TouchableOpacity>
@@ -1448,12 +1296,13 @@ function FoodDonationScreen({ onGoBack, onDonate }: { onGoBack: () => void; onDo
           <TouchableOpacity style={styles.checkbox} onPress={() => {}}>
             <FontAwesome name="check-circle" size={24} color="#198754" />
           </TouchableOpacity>
-          <Text style={[styles.checkboxText, isDarkMode && styles.darkText]}>
+          <Text style={styles.checkboxText}>
             I assure that food quality and hygiene has been maintained
           </Text>
         </View>
       </ScrollView>
 
+      {/* Donate Button */}
       <TouchableOpacity style={styles.donateButton} onPress={handleDonate}>
         <Text style={styles.donateButtonText}>Donate</Text>
       </TouchableOpacity>
@@ -1463,30 +1312,30 @@ function FoodDonationScreen({ onGoBack, onDonate }: { onGoBack: () => void; onDo
 
 // AvailableFoodItems Component
 function AvailableFoodItems({ onGoBack, addedItems }: { onGoBack: () => void; addedItems: any[] }) {
-  const { isDarkMode } = React.useContext(ThemeContext);
-
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.headerSection}>
-          <Text style={[styles.title, isDarkMode && styles.darkText]}>Available Food Items</Text>
+          <Text style={styles.title}>Available Food Items</Text>
         </View>
 
+        {/* Added Items Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Added Items</Text>
+          <Text style={styles.sectionTitle}>Added Items</Text>
           {addedItems.map((item, index) => (
-            <View key={index} style={[styles.card, isDarkMode && styles.darkCard]}>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Food Item: {item.foodItems}</Text>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Quantity: {item.quantity}</Text>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Expiry Date: {item.expiryDate}</Text>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Pickup Location: {item.pickupLocation}</Text>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Pickup Schedule: {item.pickupSchedule}</Text>
-              <Text style={[styles.cardText, isDarkMode && styles.darkText]}>Dietary Information: {item.isVegetarian ? 'Vegetarian' : 'Non-Vegetarian'}</Text>
+            <View key={index} style={styles.card}>
+              <Text style={styles.cardText}>Food Item: {item.foodItems}</Text>
+              <Text style={styles.cardText}>Quantity: {item.quantity}</Text>
+              <Text style={styles.cardText}>Expiry Date: {item.expiryDate}</Text>
+              <Text style={styles.cardText}>Pickup Location: {item.pickupLocation}</Text>
+              <Text style={styles.cardText}>Pickup Schedule: {item.pickupSchedule}</Text>
+              <Text style={styles.cardText}>Dietary Information: {item.isVegetarian ? 'Vegetarian' : 'Non-Vegetarian'}</Text>
             </View>
           ))}
         </View>
       </ScrollView>
 
+      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
         <Text style={styles.backButtonText}>Back to Home</Text>
       </TouchableOpacity>
@@ -1501,12 +1350,6 @@ export default function KyndKartApp() {
   const [donorDetailsList, setDonorDetailsList] = useState<any[]>([]);
   const [receiverDetailsList, setReceiverDetailsList] = useState<any[]>([]);
   const [addedItems, setAddedItems] = useState<any[]>([]);
-  const [isDarkMode, setIsDarkMode] = useState(Appearance.getColorScheme() === 'dark');
-  const [selectedReceiver, setSelectedReceiver] = useState<any>(null);
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
 
   const handleDonorRegister = (details: any) => {
     setDonorDetailsList([...donorDetailsList, details]);
@@ -1526,9 +1369,8 @@ export default function KyndKartApp() {
     setCurrentScreen('viewMoreReceivers');
   };
 
-  const handleViewDetails = (receiver: any) => {
-    setSelectedReceiver(receiver);
-    setCurrentScreen('receiverDetails');
+  const handleViewDetails = () => {
+    setCurrentScreen('foodDonation');
   };
 
   const handleAvailableFoodItems = () => {
@@ -1610,7 +1452,7 @@ export default function KyndKartApp() {
       case 'activity':
         return <Activity onGoBack={() => setCurrentScreen('home')} />;
       case 'account':
-        return <Account onGoBack={() => setCurrentScreen('home')} onLogout={() => setCurrentScreen('login')} />;
+        return <Account onGoBack={() => setCurrentScreen('home')} />;
       case 'registerPage':
         return (
           <Register
@@ -1624,26 +1466,13 @@ export default function KyndKartApp() {
           <ViewMoreDonors
             donorDetailsList={donorDetailsList}
             onGoBack={() => setCurrentScreen('home')}
-            onViewDetails={() => setCurrentScreen('foodDonation')}
+            onViewDetails={handleViewDetails}
             addedItems={addedItems}
             onAvailablePress={handleAvailableFoodItems}
           />
         );
       case 'viewMoreReceivers':
-        return (
-          <ViewMoreReceivers
-            receiverDetailsList={receiverDetailsList}
-            onGoBack={() => setCurrentScreen('home')}
-            onViewDetails={handleViewDetails}
-          />
-        );
-      case 'receiverDetails':
-        return (
-          <ReceiverDetails
-            receiver={selectedReceiver}
-            onGoBack={() => setCurrentScreen('viewMoreReceivers')}
-          />
-        );
+        return <ViewMoreReceivers receiverDetailsList={receiverDetailsList} onGoBack={() => setCurrentScreen('home')} />;
       case 'foodDonation':
         return <FoodDonationScreen onGoBack={() => setCurrentScreen('home')} onDonate={handleDonate} />;
       case 'availableFoodItems':
@@ -1653,13 +1482,7 @@ export default function KyndKartApp() {
     }
   };
 
-  return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
-      <SafeAreaView style={[styles.container, isDarkMode && styles.darkContainer]}>
-        {renderScreen()}
-      </SafeAreaView>
-    </ThemeContext.Provider>
-  );
+  return <SafeAreaView style={styles.container}>{renderScreen()}</SafeAreaView>;
 }
 
 // Styles
@@ -1667,9 +1490,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#E8F5F0',
-  },
-  darkContainer: {
-    backgroundColor: '#121212',
   },
   scrollView: {
     flex: 1,
@@ -1692,9 +1512,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#006E29',
     marginTop: -50,
-  },
-  darkText: {
-    color: '#FFFFFF',
   },
   contentSection: {
     alignItems: 'center',
@@ -1778,11 +1595,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#DDD',
   },
-  darkInput: {
-    backgroundColor: '#1E1E1E',
-    color: '#FFFFFF',
-    borderColor: '#333',
-  },
   forgotPassword: {
     alignSelf: 'flex-end',
     marginTop: 5,
@@ -1854,9 +1666,6 @@ const styles = StyleSheet.create({
     elevation: 3,
     marginBottom: 20,
   },
-  darkCard: {
-    backgroundColor: '#1E1E1E',
-  },
   cardText: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -1879,10 +1688,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: '#DDD',
-  },
-  darkBottomNav: {
-    backgroundColor: '#1E1E1E',
-    borderTopColor: '#333',
   },
   navButton: {
     padding: 10,
@@ -2224,6 +2029,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 16,
+  },
   checkbox: {
     marginRight: 8,
   },
@@ -2263,33 +2074,5 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 8,
     marginBottom: 8,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  settingText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#f0f0f0',
-  },
-  settingLabelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  settingIcon: {
-    marginRight: 12,
-  },
-  settingLabel: {
-    fontSize: 16,
-    color: '#333',
   },
 });
