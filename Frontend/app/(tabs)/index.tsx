@@ -435,9 +435,10 @@ type HomeScreenProps = {
   onSettingsPress: () => void;
   onActivityPress: () => void;
   onAccountPress: () => void;
+  onRegisterPress: () => void; // New prop for Register navigation
 };
 
-function HomeScreen({ onLogout, onSettingsPress, onActivityPress, onAccountPress }: HomeScreenProps) {
+function HomeScreen({ onLogout, onSettingsPress, onActivityPress, onAccountPress, onRegisterPress }: HomeScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -481,7 +482,73 @@ function HomeScreen({ onLogout, onSettingsPress, onActivityPress, onAccountPress
         <TouchableOpacity style={styles.navButton} onPress={onAccountPress}>
           <Text style={styles.navButtonText}>Account</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.navButton} onPress={onRegisterPress}>
+          <Text style={styles.navButtonText}>Register</Text>
+        </TouchableOpacity>
       </View>
+    </SafeAreaView>
+  );
+}
+
+// Register Component
+type RegisterProps = {
+  onGoBack: () => void;
+};
+
+function Register({ onGoBack }: RegisterProps) {
+  const [donorName, setDonorName] = useState('');
+  const [donorEmail, setDonorEmail] = useState('');
+  const [receiverName, setReceiverName] = useState('');
+  const [receiverEmail, setReceiverEmail] = useState('');
+
+  const handleDonorRegister = () => {
+    if (donorName.trim() !== '' && donorEmail.trim() !== '') {
+      console.log('Donor Registered:', donorName, donorEmail);
+    }
+  };
+
+  const handleReceiverRegister = () => {
+    if (receiverName.trim() !== '' && receiverEmail.trim() !== '') {
+      console.log('Receiver Registered:', receiverName, receiverEmail);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        {/* Logo at Top Center */}
+        <View style={styles.loginLogoContainer}>
+          <AppLogo />
+        </View>
+
+        {/* Register Title */}
+        <Text style={styles.loginTitle}>Register</Text>
+
+        {/* Donor Registration Form */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Donor Registration</Text>
+          <View style={styles.card}>
+            <TouchableOpacity style={styles.loginButton} onPress={handleDonorRegister}>
+              <Text style={styles.loginButtonText}>Register as Donor</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Receiver Registration Form */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Receiver Registration</Text>
+          <View style={styles.card}>
+            <TouchableOpacity style={styles.loginButton} onPress={handleReceiverRegister}>
+              <Text style={styles.loginButtonText}>Register as Receiver</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={onGoBack}>
+        <Text style={styles.backButtonText}>Back to Home</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -587,7 +654,7 @@ function Account({ onGoBack }: { onGoBack: () => void }) {
 
 // Main App Component
 export default function KyndKartApp() {
-  const [currentScreen, setCurrentScreen] = useState('welcome'); // 'welcome', 'login', 'register', 'otp', 'home', 'settings', 'activity', 'account', 'forgotPassword', 'resetPassword'
+  const [currentScreen, setCurrentScreen] = useState('welcome'); // 'welcome', 'login', 'register', 'otp', 'home', 'settings', 'activity', 'account', 'forgotPassword', 'resetPassword', 'registerPage'
   const [userEmail, setUserEmail] = useState('');
 
   const renderScreen = () => {
@@ -599,7 +666,7 @@ export default function KyndKartApp() {
           <LoginScreen
             onLogin={(email) => {
               setUserEmail(email);
-              setCurrentScreen('home'); // Navigate to home directly after login
+              setCurrentScreen('home');
             }}
             onGoToRegister={() => setCurrentScreen('register')}
             onForgotPassword={() => setCurrentScreen('forgotPassword')}
@@ -648,6 +715,7 @@ export default function KyndKartApp() {
             onSettingsPress={() => setCurrentScreen('settings')}
             onActivityPress={() => setCurrentScreen('activity')}
             onAccountPress={() => setCurrentScreen('account')}
+            onRegisterPress={() => setCurrentScreen('registerPage')} // New navigation
           />
         );
       case 'settings':
@@ -656,6 +724,8 @@ export default function KyndKartApp() {
         return <Activity onGoBack={() => setCurrentScreen('home')} />;
       case 'account':
         return <Account onGoBack={() => setCurrentScreen('home')} />;
+      case 'registerPage':
+        return <Register onGoBack={() => setCurrentScreen('home')} />; // New Register Page
       default:
         return <WelcomeScreen onNext={() => setCurrentScreen('login')} />;
     }
@@ -684,7 +754,7 @@ const styles = StyleSheet.create({
   },
   headerSection: {
     alignItems: 'center',
-    marginBottom: -40,
+    marginBottom: 20,
   },
   welcomeText: {
     fontSize: 32,
@@ -814,7 +884,7 @@ const styles = StyleSheet.create({
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop: 20,
   },
   registerText: {
     fontSize: 14,
@@ -826,14 +896,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   section: {
-    margin: 20,
+    margin: 30,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
-    marginTop: 50,
-    marginBottom: 20,
+    marginTop: -20,
+    marginBottom: 10,
   },
   card: {
     backgroundColor: '#FFFFFF',
